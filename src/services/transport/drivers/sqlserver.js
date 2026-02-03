@@ -97,6 +97,11 @@ class SQLServerDriver {
     // Defaults
     config.options = config.options || {};
     config.options.enableArithAbort = true;
+    
+    // Se TrustServerCertificate=true, desabilita encrypt para evitar problemas com IP
+    if (config.options.trustServerCertificate && config.options.encrypt !== false) {
+      config.options.encrypt = false;
+    }
 
     return config;
   }
