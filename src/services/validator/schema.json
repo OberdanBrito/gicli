@@ -18,6 +18,10 @@
             "type": "string",
             "description": "URL base da API"
           },
+          "connection_string": {
+            "type": "string",
+            "description": "String de conexão padrão para banco de dados (herdada pelos jobs)"
+          },
           "job": {
             "type": "array",
             "items": {

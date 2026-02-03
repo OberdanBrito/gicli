@@ -53,13 +53,21 @@ class TransportService {
    * @param {object} responseData - Dados da resposta da API
    * @param {object} outputConfig - Configuração de saída
    * @param {object} metadata - Metadados adicionais (timestamp, jobId, etc.)
+   * @param {object} originConfig - Configuração da origem (para herdar connection_string)
    */
-  async processDatabaseOutput(responseData, outputConfig, metadata = {}) {
+  async processDatabaseOutput(responseData, outputConfig, metadata = {}, originConfig = {}) {
     if (!this.connected || !this.activeDriver) {
       throw new Error('Transporte não conectado ao banco de dados');
     }
 
-    const { driver, table, columns = {}, data_path, clear_before_insert = false } = outputConfig;
+    const { driver, table, columns = {}, data_path, clear_before_insert = false, connection_string } = outputConfig;
+    
+    // Usa connection_string do job ou fallback para connection_string da origem
+    const finalConnectionString = connection_string || originConfig.connection_string;
+    
+    if (!finalConnectionString) {
+      throw new Error('Connection string não encontrada no job nem na origem');
+    }
 
     try {
       // Extrai dados do caminho especificado, se definido
@@ -115,7 +123,7 @@ class TransportService {
             
             // Limpa tabela antes da inserção se solicitado
             if (clear_before_insert) {
-              console.log(`⚠️ LIMPANDO TABELA [${table}] - todos os dados existentes serão deletados`);
+              console.log(`Preparando a tabela [${table}]`);
               await this.activeDriver.clearTable(table);
             }
           }

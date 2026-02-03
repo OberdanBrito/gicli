@@ -56,7 +56,14 @@ async function processJobOutput(jobConfig, jobResult, originConfig, mode, silent
         console.log('Processando saída para banco de dados...');
       }
 
-      await transportService.connect(jobConfig.output.driver, jobConfig.output.connection_string);
+      // Usa connection_string do job ou fallback para connection_string da origem
+      const connectionString = jobConfig.output.connection_string || originConfig.connection_string;
+      
+      if (!connectionString) {
+        throw new Error(`Connection string não encontrada para job ${jobConfig.id}`);
+      }
+
+      await transportService.connect(jobConfig.output.driver, connectionString);
       const outputResult = await transportService.processDatabaseOutput(
         jobResult.response.data,
         jobConfig.output,
@@ -65,7 +72,8 @@ async function processJobOutput(jobConfig, jobResult, originConfig, mode, silent
           timestamp: new Date().toISOString(),
           mode,
           jobId: jobConfig.id
-        }
+        },
+        originConfig
       );
       await transportService.disconnect();
 
