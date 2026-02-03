@@ -1,0 +1,12 @@
+node_modules/
+.git/
+.windsurf/
+logs/
+output/
+tests/
+database/
+docs/
+package-lock.json
+.gitignore
+README.md
+src/config/

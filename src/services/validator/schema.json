@@ -1,0 +1,176 @@
+{
+  "type": "object",
+  "properties": {
+    "group": {
+      "type": "string",
+      "description": "Nome do grupo de configuração"
+    },
+    "origins": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nome da origem de dados"
+          },
+          "base_url": {
+            "type": "string",
+            "description": "URL base da API"
+          },
+          "job": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Identificador único do job"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": ["auth", "request"],
+                  "description": "Tipo do job (auth ou request)"
+                },
+                "mode": {
+                  "type": "string",
+                  "enum": ["production", "test", "homologation"],
+                  "description": "Modo de execução"
+                },
+                "session_name": {
+                  "type": "string",
+                  "description": "Nome da variável de sessão para tokens"
+                },
+                "token_identifier": {
+                  "type": "string",
+                  "description": "Campo da resposta que contém o token"
+                },
+                "token_expiration_identifier": {
+                  "type": "string",
+                  "description": "Campo da resposta com tempo de expiração"
+                },
+                "token_expiration_time": {
+                  "type": "number",
+                  "description": "Tempo padrão de expiração em segundos"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Nome do job"
+                },
+                "method": {
+                  "type": "string",
+                  "enum": ["GET", "POST", "PUT", "DELETE"],
+                  "description": "Método HTTP"
+                },
+                "path": {
+                  "type": "string",
+                  "description": "Caminho do endpoint"
+                },
+                "params": {
+                  "type": "object",
+                  "description": "Parâmetros de query string"
+                },
+                "headers": {
+                  "type": "object",
+                  "description": "Cabeçalhos HTTP"
+                },
+                "auth": {
+                  "type": "object",
+                  "description": "Configuração de autenticação"
+                },
+                "timeout": {
+                  "type": "number",
+                  "description": "Timeout em milissegundos"
+                },
+                "retry_policy": {
+                  "type": "object",
+                  "description": "Política de retry"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Tags para categorização"
+                },
+                "dependencies": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Lista de IDs dos jobs dos quais este job depende"
+                },
+                "response_format": {
+                  "type": "string",
+                  "enum": ["json", "xml"],
+                  "description": "Formato esperado da resposta"
+                },
+                "output": {
+                  "type": "object",
+                  "description": "Configuração de saída para arquivos ou banco de dados",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "description": "Habilitar salvamento",
+                      "default": false
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": ["file", "database"],
+                      "description": "Tipo de saída (arquivo ou banco de dados)",
+                      "default": "file"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "Caminho do diretório onde salvar o arquivo (para type: file)"
+                    },
+                    "filename": {
+                      "type": "string",
+                      "description": "Nome do arquivo (pode usar placeholders como $TIMESTAMP, $JOB_ID) (para type: file)"
+                    },
+                    "format": {
+                      "type": "string",
+                      "enum": ["auto", "json", "xml", "txt"],
+                      "description": "Formato do arquivo (auto = baseado no Content-Type) (para type: file)",
+                      "default": "auto"
+                    },
+                    "overwrite": {
+                      "type": "boolean",
+                      "description": "Sobrescrever arquivo se existir (para type: file)",
+                      "default": true
+                    },
+                    "driver": {
+                      "type": "string",
+                      "enum": ["sqlite", "sqlserver"],
+                      "description": "Driver de banco de dados (para type: database)"
+                    },
+                    "connection_string": {
+                      "type": "string",
+                      "description": "String de conexão do banco de dados (para type: database)"
+                    },
+                    "table": {
+                      "type": "string",
+                      "description": "Nome da tabela para inserir dados (para type: database)"
+                    },
+                    "data_path": {
+                      "type": "string",
+                      "description": "Caminho para os dados dentro da resposta JSON - opcional, usa resposta completa se não especificado"
+                    }
+                  },
+                  "required": ["enabled"]
+                },
+                "payload": {
+                  "type": "object",
+                  "description": "Corpo da requisição"
+                }
+              },
+              "required": ["id", "type", "mode", "name", "method", "path"]
+            }
+          }
+        },
+        "required": ["name", "base_url", "job"]
+      }
+    }
+  },
+  "required": ["group", "origins"]
+}

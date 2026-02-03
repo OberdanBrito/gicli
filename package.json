@@ -1,0 +1,47 @@
+{
+  "name": "@tecnologiagruposrm/gicli",
+  "version": "0.1.3",
+  "description": "Gestor de Integrações - CLI tool for managing API integrations",
+  "main": "src/cli/index.js",
+  "bin": {
+    "gicli": "src/cli/index.js"
+  },
+  "scripts": {
+    "dev": "bun run src/cli/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "bun run src/cli/index.js"
+  },
+  "keywords": [
+    "cli",
+    "api",
+    "integration",
+    "automation",
+    "rest",
+    "soap",
+    "http-client",
+    "json-schema",
+    "database",
+    "sqlite",
+    "sqlserver"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oberdanbrito/gicli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/oberdanbrito/gicli/issues"
+  },
+  "homepage": "https://github.com/oberdanbrito/gicli#readme",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "ajv": "^8.12.0",
+    "mssql": "^10.0.1"
+  },
+  "author": "Oberdan Brito <oberdanbdj@gmail.com>",
+  "license": "ISC"
+}
