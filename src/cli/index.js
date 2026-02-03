@@ -9,12 +9,15 @@ import { DependencyResolver } from '../services/dependency-resolver/index.js';
 import sessionService from '../services/session/index.js';
 import environmentService from '../services/environment/index.js';
 import { readFileSync } from 'fs';
-import { join } from 'path';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 const args = process.argv.slice(2);
 
-// Ler informações do package.json
-const packageInfo = JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf-8'));
+// Ler informações do package.json do próprio módulo
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const packageInfo = JSON.parse(readFileSync(join(__dirname, '../../package.json'), 'utf-8'));
 
 function showHelp() {
   console.log(`Uso: gicli [OPÇÃO]...
