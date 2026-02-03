@@ -10,3 +10,6 @@ package-lock.json
 .gitignore
 README.md
 src/config/
+.env-server
+*-generated.json
+*-test*.json
