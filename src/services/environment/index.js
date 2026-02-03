@@ -109,7 +109,17 @@ class EnvironmentService {
 
     let result = text;
 
-    // Primeiro substitui $ENV_* (mantém comportamento existente)
+    // PRIMEIRO: Verifica se o resultado está criptografado e descriptografa
+    if (result.startsWith('ENC:')) {
+      try {
+        result = this.decrypt(result);
+      } catch (error) {
+        console.warn(`Erro ao descriptografar valor: ${error.message}`);
+        // Mantém o valor original se falhar a descriptografia
+      }
+    }
+
+    // DEPOIS: Substitui $ENV_* (mantém comportamento existente)
     const envRegex = /\$ENV_([A-Z_][A-Z0-9_]*)/g;
     result = result.replace(envRegex, (match, varName) => {
       const fullVarName = 'ENV_' + varName; // Adiciona prefixo ENV_ de volta
@@ -133,7 +143,7 @@ class EnvironmentService {
       return match;
     });
 
-    // Depois substitui template variables {{job_id.data.field}}
+    // FINALMENTE: Substitui template variables {{job_id.data.field}}
     const templateRegex = /\{\{([^}]+)\}\}/g;
     result = result.replace(templateRegex, (match, templatePath) => {
       try {
@@ -144,16 +154,6 @@ class EnvironmentService {
         return match;
       }
     });
-
-    // Finalmente, verifica se o resultado está criptografado e descriptografa
-    if (result.startsWith('ENC:')) {
-      try {
-        result = this.decrypt(result);
-      } catch (error) {
-        console.warn(`Erro ao descriptografar valor: ${error.message}`);
-        // Mantém o valor original se falhar a descriptografia
-      }
-    }
 
     return result;
   }
