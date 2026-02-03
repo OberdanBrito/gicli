@@ -139,6 +139,9 @@ async function processJobOutput(jobConfig, jobResult, originConfig, mode, silent
       
       // Aplica substituição de variáveis de ambiente na connection_string
       const connectionStringSubstituted = environmentService.substitute(connectionString, originConfig.name);
+      
+      // DEBUG: Log final connection string
+      console.log('DEBUG - Connection string final:', connectionStringSubstituted);
 
       
       await transportService.connect(jobConfig.output.driver, connectionStringSubstituted);
