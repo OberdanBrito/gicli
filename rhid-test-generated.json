@@ -1,0 +1,891 @@
+{
+  "group": "RHiD API",
+  "origins": [
+    {
+      "name": "rhid_api",
+      "base_url": "https://api.example.com",
+      "connection_string": "ENC:CRYPTED_CONNECTION_STRING_HERE",
+      "job": [
+        {
+          "id": "login",
+          "type": "auth",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "token_identifier": "accessToken",
+          "token_expiration_identifier": "expires_in",
+          "token_expiration_time": 3600,
+          "name": "login",
+          "method": "POST",
+          "path": "/login",
+          "params": {},
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "auth": {},
+          "timeout": 5000,
+          "retry_policy": {},
+          "tags": [
+            "auth"
+          ],
+          "response_format": "json",
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_getapuracaoponto",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Get apuracao ponto",
+          "method": "GET",
+          "path": "/apuracao_ponto",
+          "params": {
+            "dataIni": "${dataIni}",
+            "dataFinal": "${dataFinal}",
+            "idPerson": "${idPerson}"
+          },
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Apura&#231;&#227;o"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiGetapuracaoponto",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_getcompanies",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Get companies",
+          "method": "GET",
+          "path": "/company",
+          "params": {
+            "start": "",
+            "length": ""
+          },
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Company"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiGetcompanies",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_savecompanies",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Create companies",
+          "method": "POST",
+          "path": "/company",
+          "params": {},
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Company"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiSavecompanies",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_changecompany",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Change a company",
+          "method": "PUT",
+          "path": "/company",
+          "params": {},
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Company"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiChangecompany",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_getcompany",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Get company",
+          "method": "GET",
+          "path": "/company/{id}",
+          "params": {},
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Company"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiGetcompany",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_deletecompany",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Delete a company",
+          "method": "DELETE",
+          "path": "/company/{id}",
+          "params": {},
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Company"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiDeletecompany",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_getdepartments",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Get departments",
+          "method": "GET",
+          "path": "/department",
+          "params": {
+            "start": "",
+            "length": ""
+          },
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Department"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiGetdepartments",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_savedepartments",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Create departments",
+          "method": "POST",
+          "path": "/department",
+          "params": {},
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Department"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiSavedepartments",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_changedepartment",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Change a department",
+          "method": "PUT",
+          "path": "/department",
+          "params": {},
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Department"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiChangedepartment",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_getdepartment",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Get department",
+          "method": "GET",
+          "path": "/department/{id}",
+          "params": {},
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Department"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiGetdepartment",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_deletedepartment",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Delete a department",
+          "method": "DELETE",
+          "path": "/department/{id}",
+          "params": {},
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Department"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiDeletedepartment",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_getdevices",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Get devices",
+          "method": "GET",
+          "path": "/device",
+          "params": {
+            "start": "",
+            "length": ""
+          },
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Device"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiGetdevices",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_savedevices",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Create devices",
+          "method": "POST",
+          "path": "/device",
+          "params": {},
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Device"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiSavedevices",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_changedevice",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Change a device",
+          "method": "PUT",
+          "path": "/device",
+          "params": {},
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Device"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiChangedevice",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_getdevice",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Get device",
+          "method": "GET",
+          "path": "/device/{id}",
+          "params": {},
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Device"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiGetdevice",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_deletedevice",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Delete a device",
+          "method": "DELETE",
+          "path": "/device/{id}",
+          "params": {},
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Device"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiDeletedevice",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_login",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Create a token",
+          "method": "POST",
+          "path": "/login",
+          "params": {},
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Login"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiLogin",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_getpeoplewithouttemplate",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Get people without template",
+          "method": "GET",
+          "path": "/person",
+          "params": {
+            "start": "",
+            "length": ""
+          },
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Person"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiGetpeoplewithouttemplate",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_createpeople",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Create people",
+          "method": "POST",
+          "path": "/person",
+          "params": {},
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Person"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiCreatepeople",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_changepeople",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Change a person",
+          "method": "PUT",
+          "path": "/person",
+          "params": {},
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Person"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiChangepeople",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_specificpersonchange",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Change a person",
+          "method": "PATCH",
+          "path": "/person",
+          "params": {},
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Person"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiSpecificpersonchange",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_getperson",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Get person",
+          "method": "GET",
+          "path": "/person/{id}",
+          "params": {},
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Person"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiGetperson",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_deleteperson",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Delete a person",
+          "method": "DELETE",
+          "path": "/person/{id}",
+          "params": {},
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Person"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiDeleteperson",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_getpeoplewithtemplate",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Get people",
+          "method": "GET",
+          "path": "/person/withtemplates",
+          "params": {
+            "start": "",
+            "length": ""
+          },
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Person"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiGetpeoplewithtemplate",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_getafdreport",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Get 1510 AFD Report ",
+          "method": "GET",
+          "path": "/report/afd/download",
+          "params": {
+            "idEquipamento": "${idEquipamento}",
+            "dataIni": "",
+            "dataFinal": "",
+            "nsrInicial": "",
+            "limit": ""
+          },
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Report"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiGetafdreport",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_getafd671report",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Get 671 AFD Report ",
+          "method": "GET",
+          "path": "/report/afd/download671",
+          "params": {
+            "idEquipamento": "${idEquipamento}",
+            "dataIni": "",
+            "dataFinal": "",
+            "nsrInicial": "",
+            "limit": ""
+          },
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Report"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiGetafd671report",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_getafdreportcoletor",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Get 1510 AFD Report for a REP-P colector",
+          "method": "GET",
+          "path": "/report/afd_coletor_marcacao/download",
+          "params": {
+            "idEquipamento": "${idEquipamento}",
+            "dataIni": "",
+            "dataFinal": "",
+            "nsrInicial": "",
+            "limit": ""
+          },
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Report"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiGetafdreportcoletor",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "controlid_rhidv2_webapi_integration_api_api_getafd671reportcoletor",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_API_TOKEN",
+          "name": "Get 671 AFD Report for a REP-P colector",
+          "method": "GET",
+          "path": "/report/afd_coletor_marcacao/download671",
+          "params": {
+            "idEquipamento": "${idEquipamento}",
+            "dataIni": "",
+            "dataFinal": "",
+            "nsrInicial": "",
+            "limit": ""
+          },
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_API_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "Report"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIControlidRhidv2WebapiIntegrationApiApiGetafd671reportcoletor",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}
