@@ -22,6 +22,7 @@ Argumentos disponíveis:
   -i, --import        Importa e valida configurações
   -v, --validate      Valida configurações sem executar jobs
   -d, --dir           Diretório de configurações (padrão: docs/)
+  -f, --file          Arquivo de configuração específico
   -s, --silent        Reduz as mensagens de saída na tela
   -h, --help          Exibe esta mensagem de ajuda`);
 }
@@ -94,6 +95,7 @@ let validateOnly = false;
 let verbose = false;
 let silent = false;
 let configDir = null;
+let configFile = null;
 
 for (let i = 0; i < args.length; i++) {
   const arg = args[i];
@@ -113,6 +115,10 @@ for (let i = 0; i < args.length; i++) {
     case '-d':
     case '--dir':
       configDir = args[++i];
+      break;
+    case '-f':
+    case '--file':
+      configFile = args[++i];
       break;
     case '-h':
     case '--help':
@@ -155,7 +161,7 @@ if (mode === 'production') {
 
 if (importConfigs) {
   try {
-    await importService.loadConfigurations(false, configDir);
+    await importService.loadConfigurations(false, configDir, configFile);
     if (!silent) {
       console.log('Configurações importadas e validadas com sucesso.');
       process.exit(0);
@@ -166,7 +172,7 @@ if (importConfigs) {
   }
 } else if (validateOnly) {
   try {
-    await importService.loadConfigurations(true, configDir);
+    await importService.loadConfigurations(true, configDir, configFile);
     if (!silent) {
       console.log('Configurações validadas com sucesso.');
       process.exit(0);
@@ -179,7 +185,7 @@ if (importConfigs) {
   // Execute job com sistema de dependências
   try {
     // Carrega configurações
-    await importService.loadConfigurations(false, configDir);
+    await importService.loadConfigurations(false, configDir, configFile);
 
     // Encontra o job na configuração
     const targetJob = importService.getJobById(jobName);

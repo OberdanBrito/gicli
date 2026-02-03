@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync, existsSync, mkdirSync, copyFileSync } from 'fs';
 import { join } from 'path';
+import { execSync } from 'child_process';
 import validatorService from '../validator/index.js';
 
 /**
@@ -20,8 +21,6 @@ class ImportService {
     } catch (error) {
       console.warn(`Não foi possível criar ${this.validatedPath}:`, error.message);
       console.warn('Tentando usar sudo...');
-      // Tentar criar com sudo
-      const { execSync } = await import('child_process');
       try {
         execSync(`sudo mkdir -p ${this.validatedPath}`, { stdio: 'inherit' });
         execSync(`sudo chown ${process.env.USER || 'root'} ${this.validatedPath}`, { stdio: 'inherit' });
@@ -36,8 +35,15 @@ class ImportService {
    * Carrega todas as configurações JSON da pasta especificada (padrão: docs/)
    * @param {boolean} validateOnly - Se true, apenas valida sem salvar arquivos
    * @param {string} configPath - Caminho para o diretório de configurações
+   * @param {string} configFile - Caminho para um arquivo específico (opcional)
    */
-  async loadConfigurations(validateOnly = false, configPath = null) {
+  async loadConfigurations(validateOnly = false, configPath = null, configFile = null) {
+    if (configFile) {
+      // Carregar arquivo específico
+      return await this.loadConfigurationFromFile(configFile, validateOnly);
+    }
+
+    // Carregar todos os arquivos do diretório
     const targetPath = configPath ? join(process.cwd(), configPath) : this.configPath;
     try {
       if (!existsSync(targetPath)) {
@@ -55,6 +61,75 @@ class ImportService {
       return true;
     } catch (error) {
       console.error('Erro ao carregar configurações:', error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Carrega configuração de um arquivo específico
+   * @param {string} filePath - Caminho completo para o arquivo
+   * @param {boolean} validateOnly - Se true, apenas valida sem salvar
+   */
+  async loadConfigurationFromFile(filePath, validateOnly = false) {
+    const fullPath = join(process.cwd(), filePath);
+
+    try {
+      if (!existsSync(fullPath)) {
+        throw new Error(`Arquivo de configuração não encontrado: ${fullPath}`);
+      }
+
+      const content = readFileSync(fullPath, 'utf-8');
+      const config = JSON.parse(content);
+
+      // Validação da configuração
+      const validation = validatorService.validateConfiguration(config);
+
+      if (!validation.valid) {
+        console.error(`Configuração inválida em ${filePath}:`);
+        validation.errors.forEach(error => {
+          console.error(`  - ${error.instancePath || 'root'}: ${error.message}`);
+        });
+        throw new Error(`Configuração inválida em ${filePath}`);
+      }
+
+      if (validateOnly) {
+        console.log(`Configuração '${config.group}' validada (modo apenas validação)`);
+      } else {
+        // Configuração válida, salvar no diretório validado
+        const configFile = filePath.split('/').pop() || filePath.split('\\').pop();
+        const validatedFilePath = join(this.validatedPath, configFile);
+        try {
+          copyFileSync(fullPath, validatedFilePath);
+        } catch (copyError) {
+          console.warn(`Falha ao copiar para ${validatedFilePath}:`, copyError.message);
+          console.warn('Tentando usar sudo...');
+          try {
+            execSync(`sudo cp "${fullPath}" "${validatedFilePath}"`, { stdio: 'inherit' });
+            execSync(`sudo chown ${process.env.USER || 'root'} "${validatedFilePath}"`, { stdio: 'inherit' });
+          } catch (sudoError) {
+            console.error('Erro ao copiar com sudo:', sudoError.message);
+            throw new Error(`Não foi possível salvar configuração validada: ${validatedFilePath}`);
+          }
+        }
+        console.log(`Configuração '${config.group}' validada e salva em ${validatedFilePath}`);
+
+        // Armazena configuração usando o group como chave
+        this.configs.set(config.group, {
+          ...config,
+          _metadata: {
+            file: configFile,
+            path: fullPath,
+            validatedPath: validatedFilePath,
+            loadedAt: new Date().toISOString(),
+            validatedAt: new Date().toISOString()
+          }
+        });
+      }
+
+      console.log(`Configuração '${config.group}' carregada de ${filePath}`);
+      return true;
+    } catch (error) {
+      console.error(`Erro ao carregar ${filePath}:`, error.message);
       throw error;
     }
   }
@@ -106,7 +181,6 @@ class ImportService {
         } catch (copyError) {
           console.warn(`Falha ao copiar para ${validatedFilePath}:`, copyError.message);
           console.warn('Tentando usar sudo...');
-          const { execSync } = await import('child_process');
           try {
             execSync(`sudo cp "${filePath}" "${validatedFilePath}"`, { stdio: 'inherit' });
             execSync(`sudo chown ${process.env.USER || 'root'} "${validatedFilePath}"`, { stdio: 'inherit' });

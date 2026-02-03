@@ -51,6 +51,9 @@ gicli -i
 # Importar configurações de uma pasta específica
 gicli -i -d /caminho/para/configs
 
+# Importar arquivo específico
+gicli -i -f /caminho/para/configs/rhid.json
+
 # Para import em produção (salva em /etc/gicli):
 sudo gicli -i -d /caminho/para/configs
 
@@ -68,7 +71,7 @@ gicli --help
 
 ## ⚙️ Estrutura de Configuração
 
-As configurações são definidas em arquivos JSON separados por origem de dados. Por padrão, o GI procura por arquivos na pasta `docs/`, mas você pode especificar um diretório diferente usando a opção `-d` (ex.: `gicli -i -d ~/minhas-configs`).
+As configurações são definidas em arquivos JSON separados por origem de dados. Por padrão, o GI procura por arquivos na pasta `docs/`, mas você pode especificar um diretório diferente usando a opção `-d` (ex.: `gicli -i -d ~/minhas-configs`) ou um arquivo específico com `-f` (ex.: `gicli -i -f ~/minhas-configs/rhid.json`).
 
 **Em produção**, as configurações validadas são salvas em `/etc/gicli` (requer permissões sudo). Isso permite que múltiplos usuários acessem as configurações validadas do sistema.
 
