@@ -1,7 +1,9 @@
-import { readdirSync, readFileSync, existsSync, mkdirSync, copyFileSync } from 'fs';
+import { readdirSync, readFileSync, existsSync, mkdirSync, copyFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { execSync } from 'child_process';
+import { homedir } from 'os';
 import validatorService from '../validator/index.js';
+import dotenv from 'dotenv';
 
 /**
  * Serviço de Importação de Configurações
@@ -12,6 +14,7 @@ class ImportService {
     this.configs = new Map(); // Armazena configurações carregadas
     this.configPath = join(process.cwd(), 'docs');
     this.validatedPath = '/etc/gicli';
+    this.processedVariables = new Set(); // Evita notificações duplicadas
 
     // Garante que o diretório de configurações validadas existe
     try {
@@ -32,15 +35,34 @@ class ImportService {
   }
 
   /**
+   * Carrega variáveis de ambiente do arquivo .env
+   */
+  loadEnvironmentVariables() {
+    const envPath = join(homedir(), '.gicli', '.env');
+    
+    if (existsSync(envPath)) {
+      dotenv.config({ path: envPath });
+      console.log('Variáveis de ambiente carregadas do .env');
+    }
+  }
+
+  /**
    * Carrega todas as configurações JSON da pasta especificada (padrão: docs/)
    * @param {boolean} validateOnly - Se true, apenas valida sem salvar arquivos
    * @param {string} configPath - Caminho para o diretório de configurações
    * @param {string} configFile - Caminho para um arquivo específico (opcional)
    */
   async loadConfigurations(validateOnly = false, configPath = null, configFile = null) {
+    // Carrega variáveis de ambiente do .env
+    this.loadEnvironmentVariables();
+    
     if (configFile) {
       // Carregar arquivo específico
-      return await this.loadConfigurationFromFile(configFile, validateOnly);
+      const result = await this.loadConfigurationFromFile(configFile, validateOnly);
+      // Processa variáveis de ambiente do arquivo carregado
+      const groupName = configFile.split('/').pop().split('\\').pop().replace('.json', '').toUpperCase();
+      this.processEnvironmentVariables(join(process.cwd(), configFile), groupName);
+      return result;
     }
 
     // Carregar todos os arquivos do diretório
@@ -61,6 +83,11 @@ class ImportService {
 
       for (const dir of configDirs) {
         await this.loadConfigFromDirectory(dir.name, validateOnly, targetPath);
+        // Processa variáveis de ambiente do arquivo de configuração
+        const configFilePath = join(targetPath, dir.name, `${dir.name}.json`);
+        if (existsSync(configFilePath)) {
+          this.processEnvironmentVariables(configFilePath, dir.name.toUpperCase());
+        }
       }
 
       if (this.configs.size === 0) {
@@ -96,6 +123,9 @@ class ImportService {
         if (file.endsWith('.json')) {
           const filePath = join(this.validatedPath, file);
           await this.loadValidatedConfigurationFromFile(filePath, validateOnly);
+          // Processa variáveis de ambiente do arquivo validado
+          const groupName = file.replace('.json', '').toUpperCase();
+          this.processEnvironmentVariables(filePath, groupName);
         }
       }
 
@@ -110,6 +140,7 @@ class ImportService {
       throw error;
     }
   }
+
   async loadConfigurationFromFile(filePath, validateOnly = false) {
     const fullPath = join(process.cwd(), filePath);
 
@@ -206,6 +237,7 @@ class ImportService {
       throw error;
     }
   }
+
   async loadConfigFromDirectory(dirName, validateOnly = false, basePath = null) {
     const dirPath = join(basePath || this.configPath, dirName);
     const files = readdirSync(dirPath);
@@ -338,6 +370,139 @@ class ImportService {
   async reloadConfigurations() {
     this.configs.clear();
     return await this.loadConfigurations();
+  }
+
+  /**
+   * Cria o diretório .gicli na home do usuário se não existir
+   */
+  createGicliDirectory() {
+    const homeDir = homedir();
+    const gicliDir = join(homeDir, '.gicli');
+    
+    if (!existsSync(gicliDir)) {
+      mkdirSync(gicliDir, { recursive: true });
+      console.log(`Diretório criado: ${gicliDir}`);
+    }
+    
+    return gicliDir;
+  }
+
+  /**
+   * Cria o arquivo .env no diretório .gicli se não existir
+   */
+  createEnvFile() {
+    const gicliDir = this.createGicliDirectory();
+    const envPath = join(gicliDir, '.env');
+    
+    if (!existsSync(envPath)) {
+      writeFileSync(envPath, '# Variáveis de ambiente do GICLI\n');
+      console.log(`Arquivo .env criado: ${envPath}`);
+    }
+    
+    return envPath;
+  }
+
+  /**
+   * Extrai variáveis de ambiente de um objeto JSON que começam com $
+   * @param {Object} obj - Objeto JSON para analisar
+   * @param {Array} variables - Array para acumular variáveis encontradas
+   */
+  extractEnvVariables(obj, variables = []) {
+    for (const key in obj) {
+      if (typeof obj[key] === 'string' && obj[key].startsWith('$')) {
+        const envVar = obj[key].substring(1);
+        if (/^[A-Z_][A-Z0-9_]*$/.test(envVar) && !variables.includes(envVar)) {
+          variables.push(envVar);
+        }
+      } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+        this.extractEnvVariables(obj[key], variables);
+      }
+    }
+    return variables;
+  }
+
+  /**
+   * Adiciona variáveis de ambiente ao arquivo .env sem sobrescrever existentes
+   * @param {Array} newVariables - Array de variáveis para adicionar
+   * @param {string} groupName - Nome do grupo para comentário no .env
+   */
+  addToEnvFile(newVariables, groupName = 'Geral') {
+    const envPath = this.createEnvFile();
+    const envContent = readFileSync(envPath, 'utf8');
+    const existingVars = new Set();
+    
+    // Extrair variáveis existentes do arquivo .env
+    const lines = envContent.split('\n');
+    lines.forEach(line => {
+      const match = line.match(/^([A-Z_][A-Z0-9_]*)=/);
+      if (match) {
+        existingVars.add(match[1]);
+      }
+    });
+    
+    // Adicionar novas variáveis que não existem e não foram processadas antes
+    const varsToAdd = newVariables.filter(varName => 
+      !existingVars.has(varName) && !this.processedVariables.has(varName)
+    );
+    
+    if (varsToAdd.length > 0) {
+      const newContent = envContent + 
+                        `\n# Variáveis do grupo ${groupName}\n` + 
+                        varsToAdd.map(varName => `${varName}=`).join('\n') + '\n';
+      writeFileSync(envPath, newContent);
+      console.log(`Variáveis adicionadas ao .env (${groupName}): ${varsToAdd.join(', ')}`);
+      
+      // Marcar como processadas
+      varsToAdd.forEach(varName => this.processedVariables.add(varName));
+    }
+    
+    return varsToAdd;
+  }
+
+  /**
+   * Informa ao usuário sobre variáveis que precisam ser preenchidas
+   * @param {Array} variables - Array de variáveis que precisam de valor
+   */
+  notifyUserToFillVariables(variables) {
+    // Filtrar apenas variáveis que não existem no process.env
+    const varsNeedingValue = variables.filter(varName => !process.env[varName]);
+    
+    if (varsNeedingValue.length > 0) {
+      console.log('\n=== ATENÇÃO ===');
+      console.log('As seguintes variáveis de ambiente precisam ser configuradas:');
+      varsNeedingValue.forEach(varName => {
+        console.log(`  - ${varName}`);
+      });
+      console.log(`\nEdite o arquivo .env em: ${join(homedir(), '.gicli', '.env')}`);
+      console.log('Adicione os valores correspondentes às variáveis acima.\n');
+    }
+  }
+
+  /**
+   * Processa um arquivo JSON e configura variáveis de ambiente automaticamente
+   * @param {string} jsonFilePath - Caminho do arquivo JSON para processar
+   * @param {string} groupName - Nome do grupo para organização no .env
+   */
+  processEnvironmentVariables(jsonFilePath, groupName = 'Geral') {
+    try {
+      if (!existsSync(jsonFilePath)) {
+        console.log(`Arquivo JSON não encontrado: ${jsonFilePath}`);
+        return [];
+      }
+      
+      const jsonContent = JSON.parse(readFileSync(jsonFilePath, 'utf8'));
+      const envVariables = this.extractEnvVariables(jsonContent);
+      const addedVariables = this.addToEnvFile(envVariables, groupName);
+      
+      if (addedVariables.length > 0) {
+        this.notifyUserToFillVariables(addedVariables);
+      }
+      
+      return addedVariables;
+    } catch (error) {
+      console.error(`Erro ao processar variáveis de ambiente: ${error.message}`);
+      return [];
+    }
   }
 
   /**
