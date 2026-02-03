@@ -63,13 +63,11 @@ async function processJobOutput(jobConfig, jobResult, originConfig, mode, silent
         throw new Error(`Connection string não encontrada para job ${jobConfig.id}`);
       }
 
-      console.log(`[DEBUG] Connection string antes da substituição: ${connectionString}`);
-
+      
       // Aplica substituição de variáveis de ambiente na connection_string
       const connectionStringSubstituted = environmentService.substitute(connectionString, originConfig.name);
 
-      console.log(`[DEBUG] Connection string após substituição: ${connectionStringSubstituted}`);
-
+      
       await transportService.connect(jobConfig.output.driver, connectionStringSubstituted);
       const outputResult = await transportService.processDatabaseOutput(
         jobResult.response.data,
