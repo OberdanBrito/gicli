@@ -1,0 +1,2140 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "0.0.1",
+        "title": "RHiD API",
+        "description": "RHiD API Documentation",
+        "contact": {
+            "name": "ControlID",
+            "email": "integracao@controlid.com.br"
+        }
+    },
+    "basePath": "/v2/api.svc",
+    "paths": {
+        "/apuracao_ponto": {
+            "get": {
+                "tags": [
+                    "Apura&#231;&#227;o"
+                ],
+                "summary": "Get apuracao ponto",
+                "description": "Get apuracao ponto",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.GetApuracaoPonto",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "dataIni",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "dataFinal",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "idPerson",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/company": {
+            "get": {
+                "tags": [
+                    "Company"
+                ],
+                "summary": "Get companies",
+                "description": "Get a list of companies",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.GetCompanies",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "start",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "name": "length",
+                        "in": "query",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.CompanyResult"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Company"
+                ],
+                "summary": "Create companies",
+                "description": "Create companies using the array provided in the body",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.SaveCompanies",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "list",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.CompanyDTO"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.CreateCompanyResult"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Company"
+                ],
+                "summary": "Change a company",
+                "description": "Change the company entry provided in the body",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.ChangeCompany",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "company",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.CompanyDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/company/{id}": {
+            "get": {
+                "tags": [
+                    "Company"
+                ],
+                "summary": "Get company",
+                "description": "Get a company specified by its id",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.GetCompany",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.CompanyDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Company"
+                ],
+                "summary": "Delete a company",
+                "description": "Delete the company with the id provided in the route",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.DeleteCompany",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/department": {
+            "get": {
+                "tags": [
+                    "Department"
+                ],
+                "summary": "Get departments",
+                "description": "Get a list of departments",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.GetDepartments",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "start",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "name": "length",
+                        "in": "query",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.DepartmentResult"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Department"
+                ],
+                "summary": "Create departments",
+                "description": "Create departments using the array provided in the body",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.SaveDepartments",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "list",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.DepartmentDTO"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.CreateDepartmentResult"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Department"
+                ],
+                "summary": "Change a department",
+                "description": "Change the department entry provided in the body",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.ChangeDepartment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "department",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.DepartmentDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/department/{id}": {
+            "get": {
+                "tags": [
+                    "Department"
+                ],
+                "summary": "Get department",
+                "description": "Get a department specified by its id",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.GetDepartment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.DepartmentDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Department"
+                ],
+                "summary": "Delete a department",
+                "description": "Delete the department with the id provided in the route",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.DeleteDepartment",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/device": {
+            "get": {
+                "tags": [
+                    "Device"
+                ],
+                "summary": "Get devices",
+                "description": "Get a list of devices",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.GetDevices",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "start",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "name": "length",
+                        "in": "query",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.DeviceResult"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Device"
+                ],
+                "summary": "Create devices",
+                "description": "Create devices using the array provided in the body",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.SaveDevices",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "list",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.DeviceDTO"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.CreateDeviceResult"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Device"
+                ],
+                "summary": "Change a device",
+                "description": "Change the device entry provided in the body",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.ChangeDevice",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "device",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.DeviceDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/device/{id}": {
+            "get": {
+                "tags": [
+                    "Device"
+                ],
+                "summary": "Get device",
+                "description": "Get a device specified by its id",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.GetDevice",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.DeviceDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Device"
+                ],
+                "summary": "Delete a device",
+                "description": "Delete the device with the id provided in the route",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.DeleteDevice",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Create a token",
+                "description": "Create a token to have access in other endpoints",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.Login",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "client",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.LoginRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Token created",
+                        "schema": {
+                            "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.LoginResult"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/person": {
+            "get": {
+                "tags": [
+                    "Person"
+                ],
+                "summary": "Get people without template",
+                "description": "Get a list of people without the template property",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.GetPeopleWithoutTemplate",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "start",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "name": "length",
+                        "in": "query",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.PersonResult"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Person"
+                ],
+                "summary": "Create people",
+                "description": "Create people using the array provided in the body",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.CreatePeople",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "listPerson",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.PersonDTO"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.CreatePersonResult"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Person"
+                ],
+                "summary": "Change a person",
+                "description": "If the property 'templates' is not provided or is provided with a null value, the system consider that the the templates should be changed for this user. If a value is provided, even an empty array, then the system will change the templates for this person i.e. if the template property is an empty array, the system will exclude the templates for this person.",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.ChangePeople",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "person",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.PersonDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Person"
+                ],
+                "summary": "Change a person",
+                "description": "If the property 'templates' is not provided or is provided with a null value, the system consider that the the templates should be changed for this user. If a value is provided, even an empty array, then the system will change the templates for this person i.e. if the template property is an empty array, the system will exclude the templates for this person.",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.SpecificPersonChange",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "listPerson",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.PersonDTO"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/person/{id}": {
+            "get": {
+                "tags": [
+                    "Person"
+                ],
+                "summary": "Get person",
+                "description": "Get a person specified by its id",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.GetPerson",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.PersonDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Person"
+                ],
+                "summary": "Delete a person",
+                "description": "Delete the person with the id provided in the route",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.DeletePerson",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/person/withtemplates": {
+            "get": {
+                "tags": [
+                    "Person"
+                ],
+                "summary": "Get people",
+                "description": "Get a list of people with the template property",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.GetPeopleWithTemplate",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "start",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "name": "length",
+                        "in": "query",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.PersonResult"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/report/afd/download": {
+            "get": {
+                "tags": [
+                    "Report"
+                ],
+                "summary": "Get 1510 AFD Report ",
+                "description": "Get AFD Report using 1510 format",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.GetAfdReport",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "idEquipamento",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "dataIni",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "name": "dataFinal",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "name": "nsrInicial",
+                        "in": "query",
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/report/afd/download671": {
+            "get": {
+                "tags": [
+                    "Report"
+                ],
+                "summary": "Get 671 AFD Report ",
+                "description": "Get AFD Report using 671 format",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.GetAfd671Report",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "idEquipamento",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "dataIni",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "name": "dataFinal",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "name": "nsrInicial",
+                        "in": "query",
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/report/afd_coletor_marcacao/download": {
+            "get": {
+                "tags": [
+                    "Report"
+                ],
+                "summary": "Get 1510 AFD Report for a REP-P colector",
+                "description": "Get AFD Report for a REP-P colector using 1510 format",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.GetAfdReportColetor",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "idEquipamento",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "dataIni",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "name": "dataFinal",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "name": "nsrInicial",
+                        "in": "query",
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/report/afd_coletor_marcacao/download671": {
+            "get": {
+                "tags": [
+                    "Report"
+                ],
+                "summary": "Get 671 AFD Report for a REP-P colector",
+                "description": "Get AFD Report for a REP-P colector using 671 format",
+                "operationId": "ControliD.RHiDv2.WebAPI.Integration.API.Api.GetAfd671ReportColetor",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token created at the login endpoint",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer token"
+                    },
+                    {
+                        "name": "idEquipamento",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "dataIni",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "name": "dataFinal",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "name": "nsrInicial",
+                        "in": "query",
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "not available",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "ControliD.RHiDv2.WebAPI.CustomerMobile": {
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "domain": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "name": {
+                    "type": "string",
+                    "uniqueItems": false
+                }
+            },
+            "type": "object",
+            "format": "ControliD.RHiDv2.WebAPI.CustomerMobile"
+        },
+        "ControliD.RHiDv2.WebAPI.Integration.API.Models.CompanyDTO": {
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "cnpj": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "name": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "tradingName": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "numFolha": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "address": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "district": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "city": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "state": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "zip": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "cei": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "sponsorCpf": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "sponsorName": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "sponsorRole": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "sponsorEmail": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "numPersons": {
+                    "type": "integer",
+                    "format": "int32",
+                    "uniqueItems": false
+                },
+                "idApprovalFlow": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "timeZone": {
+                    "type": "integer",
+                    "format": "int32",
+                    "uniqueItems": false
+                },
+                "serialRep": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "cno": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "caepf": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "linkedDeviceIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "uniqueItems": false
+                }
+            },
+            "type": "object",
+            "format": "ControliD.RHiDv2.WebAPI.Integration.API.Models.CompanyDTO"
+        },
+        "ControliD.RHiDv2.WebAPI.Integration.API.Models.CompanyResult": {
+            "properties": {
+                "totalRecords": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "records": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.CompanyDTO"
+                    },
+                    "uniqueItems": false
+                }
+            },
+            "type": "object",
+            "format": "ControliD.RHiDv2.WebAPI.Integration.API.Models.CompanyResult"
+        },
+        "ControliD.RHiDv2.WebAPI.Integration.API.Models.CreateCompanyResult": {
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "success": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.CompanyDTO"
+                    },
+                    "uniqueItems": false
+                },
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.ErrorResult`1[[ControliD.RHiDv2.WebAPI.Integration.API.Models.CompanyDTO, ControliD.RHiDv2, Version=26.1.22.0, Culture=neutral, PublicKeyToken=null]]"
+                    },
+                    "uniqueItems": false
+                }
+            },
+            "type": "object",
+            "format": "ControliD.RHiDv2.WebAPI.Integration.API.Models.CreateCompanyResult"
+        },
+        "ControliD.RHiDv2.WebAPI.Integration.API.Models.CreateDepartmentResult": {
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "success": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.DepartmentDTO"
+                    },
+                    "uniqueItems": false
+                },
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.ErrorResult`1[[ControliD.RHiDv2.WebAPI.Integration.API.Models.DepartmentDTO, ControliD.RHiDv2, Version=26.1.22.0, Culture=neutral, PublicKeyToken=null]]"
+                    },
+                    "uniqueItems": false
+                }
+            },
+            "type": "object",
+            "format": "ControliD.RHiDv2.WebAPI.Integration.API.Models.CreateDepartmentResult"
+        },
+        "ControliD.RHiDv2.WebAPI.Integration.API.Models.CreateDeviceResult": {
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "success": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.DeviceDTO"
+                    },
+                    "uniqueItems": false
+                },
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.ErrorResult`1[[ControliD.RHiDv2.WebAPI.Integration.API.Models.DeviceDTO, ControliD.RHiDv2, Version=26.1.22.0, Culture=neutral, PublicKeyToken=null]]"
+                    },
+                    "uniqueItems": false
+                }
+            },
+            "type": "object",
+            "format": "ControliD.RHiDv2.WebAPI.Integration.API.Models.CreateDeviceResult"
+        },
+        "ControliD.RHiDv2.WebAPI.Integration.API.Models.CreatePersonResult": {
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "success": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.PersonDTO"
+                    },
+                    "uniqueItems": false
+                },
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.ErrorResult`1[[ControliD.RHiDv2.WebAPI.Integration.API.Models.PersonDTO, ControliD.RHiDv2, Version=26.1.22.0, Culture=neutral, PublicKeyToken=null]]"
+                    },
+                    "uniqueItems": false
+                }
+            },
+            "type": "object",
+            "format": "ControliD.RHiDv2.WebAPI.Integration.API.Models.CreatePersonResult"
+        },
+        "ControliD.RHiDv2.WebAPI.Integration.API.Models.DepartmentDTO": {
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "name": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "idCompany": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "folha": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "companyName": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "idApprovalFlow": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "linkedDeviceIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "uniqueItems": false
+                }
+            },
+            "type": "object",
+            "format": "ControliD.RHiDv2.WebAPI.Integration.API.Models.DepartmentDTO"
+        },
+        "ControliD.RHiDv2.WebAPI.Integration.API.Models.DepartmentResult": {
+            "properties": {
+                "totalRecords": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "records": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.DepartmentDTO"
+                    },
+                    "uniqueItems": false
+                }
+            },
+            "type": "object",
+            "format": "ControliD.RHiDv2.WebAPI.Integration.API.Models.DepartmentResult"
+        },
+        "ControliD.RHiDv2.WebAPI.Integration.API.Models.DeviceDTO": {
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "serial": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "version": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "linkedCompanyId": {
+                    "type": "integer",
+                    "format": "int32",
+                    "uniqueItems": false
+                },
+                "sendAll": {
+                    "type": "boolean",
+                    "uniqueItems": false
+                },
+                "status": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "timeZone": {
+                    "type": "integer",
+                    "format": "int32",
+                    "uniqueItems": false
+                },
+                "statusPapel": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "numberOfPeople": {
+                    "type": "integer",
+                    "format": "int32",
+                    "uniqueItems": false
+                },
+                "numberOfFingerprints": {
+                    "type": "integer",
+                    "format": "int32",
+                    "uniqueItems": false
+                },
+                "listOfLinkedPersonIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "uniqueItems": false
+                },
+                "listOfLinkedCompanyIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "uniqueItems": false
+                },
+                "listOfLinkedDepartmentIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "uniqueItems": false
+                },
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                }
+            },
+            "type": "object",
+            "format": "ControliD.RHiDv2.WebAPI.Integration.API.Models.DeviceDTO"
+        },
+        "ControliD.RHiDv2.WebAPI.Integration.API.Models.DeviceResult": {
+            "properties": {
+                "totalRecords": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "records": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.DeviceDTO"
+                    },
+                    "uniqueItems": false
+                }
+            },
+            "type": "object",
+            "format": "ControliD.RHiDv2.WebAPI.Integration.API.Models.DeviceResult"
+        },
+        "ControliD.RHiDv2.WebAPI.Integration.API.Models.ErrorResult`1[[ControliD.RHiDv2.WebAPI.Integration.API.Models.CompanyDTO, ControliD.RHiDv2, Version=26.1.22.0, Culture=neutral, PublicKeyToken=null]]": {
+            "properties": {
+                "obj": {
+                    "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.CompanyDTO"
+                },
+                "reason": {
+                    "type": "string",
+                    "uniqueItems": false
+                }
+            },
+            "type": "object",
+            "format": "ControliD.RHiDv2.WebAPI.Integration.API.Models.ErrorResult`1[[ControliD.RHiDv2.WebAPI.Integration.API.Models.CompanyDTO, ControliD.RHiDv2, Version=26.1.22.0, Culture=neutral, PublicKeyToken=null]]"
+        },
+        "ControliD.RHiDv2.WebAPI.Integration.API.Models.ErrorResult`1[[ControliD.RHiDv2.WebAPI.Integration.API.Models.DepartmentDTO, ControliD.RHiDv2, Version=26.1.22.0, Culture=neutral, PublicKeyToken=null]]": {
+            "properties": {
+                "obj": {
+                    "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.DepartmentDTO"
+                },
+                "reason": {
+                    "type": "string",
+                    "uniqueItems": false
+                }
+            },
+            "type": "object",
+            "format": "ControliD.RHiDv2.WebAPI.Integration.API.Models.ErrorResult`1[[ControliD.RHiDv2.WebAPI.Integration.API.Models.DepartmentDTO, ControliD.RHiDv2, Version=26.1.22.0, Culture=neutral, PublicKeyToken=null]]"
+        },
+        "ControliD.RHiDv2.WebAPI.Integration.API.Models.ErrorResult`1[[ControliD.RHiDv2.WebAPI.Integration.API.Models.DeviceDTO, ControliD.RHiDv2, Version=26.1.22.0, Culture=neutral, PublicKeyToken=null]]": {
+            "properties": {
+                "obj": {
+                    "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.DeviceDTO"
+                },
+                "reason": {
+                    "type": "string",
+                    "uniqueItems": false
+                }
+            },
+            "type": "object",
+            "format": "ControliD.RHiDv2.WebAPI.Integration.API.Models.ErrorResult`1[[ControliD.RHiDv2.WebAPI.Integration.API.Models.DeviceDTO, ControliD.RHiDv2, Version=26.1.22.0, Culture=neutral, PublicKeyToken=null]]"
+        },
+        "ControliD.RHiDv2.WebAPI.Integration.API.Models.ErrorResult`1[[ControliD.RHiDv2.WebAPI.Integration.API.Models.PersonDTO, ControliD.RHiDv2, Version=26.1.22.0, Culture=neutral, PublicKeyToken=null]]": {
+            "properties": {
+                "obj": {
+                    "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.PersonDTO"
+                },
+                "reason": {
+                    "type": "string",
+                    "uniqueItems": false
+                }
+            },
+            "type": "object",
+            "format": "ControliD.RHiDv2.WebAPI.Integration.API.Models.ErrorResult`1[[ControliD.RHiDv2.WebAPI.Integration.API.Models.PersonDTO, ControliD.RHiDv2, Version=26.1.22.0, Culture=neutral, PublicKeyToken=null]]"
+        },
+        "ControliD.RHiDv2.WebAPI.Integration.API.Models.LoginRequestDTO": {
+            "description": "Use a valid email and password to create a token",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "description": "User's email",
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "password": {
+                    "description": "User's password",
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "domain": {
+                    "description": "User's domain",
+                    "type": "string",
+                    "uniqueItems": false
+                }
+            },
+            "type": "object",
+            "format": "ControliD.RHiDv2.WebAPI.Integration.API.Models.LoginRequestDTO"
+        },
+        "ControliD.RHiDv2.WebAPI.Integration.API.Models.PersonDTO": {
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "cpf": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "pis": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "name": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "registration": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "idDepartment": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "idCompany": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "rfid": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "barCode": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "code": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "password": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "isAdmin": {
+                    "type": "boolean",
+                    "uniqueItems": false
+                },
+                "getTemplates": {
+                    "type": "boolean",
+                    "uniqueItems": false
+                },
+                "numberOfTemplates": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "status": {
+                    "type": "integer",
+                    "format": "int32",
+                    "uniqueItems": false
+                },
+                "linkedDeviceIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "uniqueItems": false
+                },
+                "templates": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "uniqueItems": false
+                }
+            },
+            "type": "object",
+            "format": "ControliD.RHiDv2.WebAPI.Integration.API.Models.PersonDTO"
+        },
+        "ControliD.RHiDv2.WebAPI.Integration.API.Models.PersonResult": {
+            "properties": {
+                "totalRecords": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                },
+                "records": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.Integration.API.Models.PersonDTO"
+                    },
+                    "uniqueItems": false
+                }
+            },
+            "type": "object",
+            "format": "ControliD.RHiDv2.WebAPI.Integration.API.Models.PersonResult"
+        },
+        "ControliD.RHiDv2.WebAPI.LoginResult": {
+            "properties": {
+                "listCustomer": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ControliD.RHiDv2.WebAPI.CustomerMobile"
+                    },
+                    "uniqueItems": false
+                },
+                "accessToken": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "expiredPassword": {
+                    "type": "boolean",
+                    "uniqueItems": false
+                },
+                "revendaInadimplente": {
+                    "type": "boolean",
+                    "uniqueItems": false
+                },
+                "isPerson": {
+                    "type": "boolean",
+                    "uniqueItems": false
+                },
+                "code": {
+                    "type": "integer",
+                    "format": "int32",
+                    "uniqueItems": false
+                },
+                "error": {
+                    "type": "string",
+                    "uniqueItems": false
+                },
+                "newID": {
+                    "type": "integer",
+                    "format": "int64",
+                    "uniqueItems": false
+                }
+            },
+            "type": "object",
+            "format": "ControliD.RHiDv2.WebAPI.LoginResult"
+        }
+    }
+}
