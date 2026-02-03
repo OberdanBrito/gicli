@@ -284,6 +284,7 @@ if (importConfigs) {
     if (!silent) {
       console.log(`Todos os jobs executados com sucesso. Job alvo: ${jobName}`);
     }
+    process.exit(0);
 
   } catch (error) {
     console.error('Erro executando job:', error.message);
