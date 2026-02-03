@@ -45,8 +45,11 @@ gicli -p -j <nome_do_job>
 # Executar job em modo teste (com logs detalhados)
 gicli -t -j <nome_do_job>
 
-# Importar e validar configurações
+# Importar e validar configurações (pasta padrão: docs/)
 gicli -i
+
+# Importar configurações de uma pasta específica
+gicli -i -d /caminho/para/configs
 
 # Validar configurações sem executar
 gicli -v
@@ -62,7 +65,9 @@ gicli --help
 
 ## ⚙️ Estrutura de Configuração
 
-As configurações são definidas em arquivos JSON separados por origem de dados. Cada arquivo descreve:
+As configurações são definidas em arquivos JSON separados por origem de dados. Por padrão, o GI procura por arquivos na pasta `docs/`, mas você pode especificar um diretório diferente usando a opção `-d` (ex.: `gicli -i -d ~/minhas-configs`).
+
+Cada arquivo descreve:
 
 - **Grupo**: Nome do conjunto de integrações
 - **Origens**: Fontes de dados (APIs) com jobs associados
