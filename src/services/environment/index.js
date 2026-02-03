@@ -121,6 +121,11 @@ class EnvironmentService {
 
     // DEPOIS: Substitui $ENV_* (mantém comportamento existente)
     const envRegex = /\$ENV_([A-Z_][A-Z0-9_]*)/g;
+    
+    // DEBUG: Verificar se ENV_SQLSERVER_PASSWORD está em process.env
+    console.log('DEBUG - ENV_SQLSERVER_PASSWORD em process.env:', process.env.ENV_SQLSERVER_PASSWORD);
+    console.log('DEBUG - Texto antes da substituição:', result);
+    
     result = result.replace(envRegex, (match, varName) => {
       const fullVarName = 'ENV_' + varName; // Adiciona prefixo ENV_ de volta
       
