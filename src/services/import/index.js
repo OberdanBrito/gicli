@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync, existsSync, mkdirSync, copyFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { join, isAbsolute } from 'path';
 import { execSync } from 'child_process';
 import { homedir } from 'os';
 import validatorService from '../validator/index.js';
@@ -61,7 +61,8 @@ class ImportService {
       const result = await this.loadConfigurationFromFile(configFile, validateOnly);
       // Processa variáveis de ambiente do arquivo carregado
       const groupName = configFile.split('/').pop().split('\\').pop().replace('.json', '').toUpperCase();
-      this.processEnvironmentVariables(join(process.cwd(), configFile), groupName);
+      const configFilePath = isAbsolute(configFile) ? configFile : join(process.cwd(), configFile);
+      this.processEnvironmentVariables(configFilePath, groupName);
       return result;
     }
 
