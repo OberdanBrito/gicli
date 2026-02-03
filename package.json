@@ -1,6 +1,6 @@
 {
   "name": "@tecnologiagruposrm/gicli",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Gestor de Integrações - CLI tool for managing API integrations",
   "main": "src/cli/index.js",
   "type": "module",
