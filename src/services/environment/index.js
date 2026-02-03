@@ -1,5 +1,4 @@
-import { readFileSync, existsSync } from 'fs';
-import { join } from 'path';
+import { homedir } from 'os';
 
 /**
  * Serviço de Ambiente
@@ -13,60 +12,18 @@ class EnvironmentService {
 
   /**
    * Carrega variáveis de ambiente para uma origem
-   * Procura por arquivo .env na pasta da origem
+   * Agora usa o sistema centralizado ~/.gicli/.env
    * @param {string} originName - Nome da origem
    */
   load(originName) {
-    const envFile = join(process.cwd(), 'src/config', originName, '.env');
-
-    if (!existsSync(envFile)) {
-      console.warn(`Arquivo .env não encontrado para origem ${originName}: ${envFile}`);
-      return;
+    // Como usamos dotenv no import service, as variáveis já estão em process.env
+    // Não precisamos mais carregar arquivos .env específicos por origem
+    console.log(`Usando variáveis de ambiente do sistema para ${originName}`);
+    
+    // Mantém compatibilidade com código que espera cache por origem
+    if (!this.envCache.has(originName)) {
+      this.envCache.set(originName, {});
     }
-
-    try {
-      const content = readFileSync(envFile, 'utf-8');
-      const envVars = this.parseEnvFile(content);
-
-      this.envCache.set(originName, envVars);
-      console.log(`Variáveis de ambiente carregadas para ${originName}`);
-    } catch (error) {
-      console.error(`Erro ao carregar .env para ${originName}:`, error.message);
-    }
-  }
-
-  /**
-   * Faz parse de arquivo .env
-   * @param {string} content - Conteúdo do arquivo
-   * @returns {object} Objeto com variáveis
-   */
-  parseEnvFile(content) {
-    const envVars = {};
-
-    const lines = content.split('\n');
-
-    for (const line of lines) {
-      const trimmed = line.trim();
-
-      // Ignora linhas vazias e comentários
-      if (!trimmed || trimmed.startsWith('#')) continue;
-
-      const equalIndex = trimmed.indexOf('=');
-      if (equalIndex === -1) continue;
-
-      const key = trimmed.substring(0, equalIndex).trim();
-      let value = trimmed.substring(equalIndex + 1).trim();
-
-      // Remove aspas se presentes
-      if ((value.startsWith('"') && value.endsWith('"')) ||
-          (value.startsWith("'") && value.endsWith("'"))) {
-        value = value.slice(1, -1);
-      }
-
-      envVars[key] = value;
-    }
-
-    return envVars;
   }
 
   /**
