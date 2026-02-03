@@ -1,6 +1,67 @@
 # Changelog
 
-## [0.3.2] - 2025-02-03
+## [0.3.7] - 2025-02-03
+
+### 🔒 Security
+- **Remover Logs Sensíveis**: Eliminados console.log que exibiam connection strings com senhas em produção
+- **Proteção de Credenciais**: Versão segura sem vazamento de informações sensíveis nos logs
+
+### 🐛 Bug Fixes
+- **Substituição de Variáveis na Origem**: Corrigido problema onde `$ENV_SQLSERVER_PASSWORD` não era substituído em connection_string do nível da origem
+- **Fallback de Connection String**: Implementado substituição de ambiente para connection_string herdada da origem
+
+## [0.3.6] - 2025-02-03
+
+### 🐛 Bug Fixes
+- **Connection String Global**: Corrigido erro "Login failed" devido a falta de substituição de variáveis de ambiente em connection_string da origem
+- **Substituição de Ambiente**: Adicionado `environmentService.substitute()` para connection_string do nível da origem
+
+### 🔧 Technical Changes
+- Implementado fallback: job.connection_string → origin.connection_string
+- Adicionados logs temporários para debug (removidos na v0.3.7)
+
+## [0.3.5] - 2025-02-03
+
+### ✨ New Features
+- **Connection String Global**: Implementado suporte a connection_string no nível da origem
+- **Herança de Configuração**: Jobs herdam connection_string da origem quando não definida individualmente
+- **Fallback Inteligente**: Prioriza connection_string do job, depois usa da origem
+
+### 🔧 Technical Changes
+- Schema validator atualizado para permitir connection_string na origem
+- Transport service implementado com lógica de fallback
+- CLI atualizado para passar originConfig e usar lógica de herança
+- JSON refatorado: 12 connection_strings duplicadas removidas
+- Compatibilidade 100% mantida com configurações existentes
+
+### 📝 Usage
+```json
+{
+  "origins": [
+    {
+      "name": "rhid",
+      "connection_string": "server=...;password=$ENV_SQLSERVER_PASSWORD;...",
+      "job": [
+        {
+          "output": {
+            "driver": "sqlserver",
+            "table": "MinhaTabela"
+            // connection_string herdada da origem
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+## [0.3.4] - 2025-02-03
+
+### 🐛 Bug Fixes
+- **Process Exit**: Adicionado `process.exit(0)` para garantir retorno ao prompt de comando após execução bem-sucedida
+- **Processo Pendurado**: Resolvido problema onde CLI não retornava ao prompt após conclusão
+
+## [0.3.3] - 2025-02-03
 
 ### ✨ New Features
 - **Limpeza de Tabela Antes da Inserção**:
