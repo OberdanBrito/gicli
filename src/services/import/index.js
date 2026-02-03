@@ -19,20 +19,22 @@ class ImportService {
   }
 
   /**
-   * Carrega todas as configurações JSON da pasta docs/
+   * Carrega todas as configurações JSON da pasta especificada (padrão: docs/)
    * @param {boolean} validateOnly - Se true, apenas valida sem salvar arquivos
+   * @param {string} configPath - Caminho para o diretório de configurações
    */
-  async loadConfigurations(validateOnly = false) {
+  async loadConfigurations(validateOnly = false, configPath = null) {
+    const targetPath = configPath ? join(process.cwd(), configPath) : this.configPath;
     try {
-      if (!existsSync(this.configPath)) {
-        throw new Error(`Diretório de configurações não encontrado: ${this.configPath}`);
+      if (!existsSync(targetPath)) {
+        throw new Error(`Diretório de configurações não encontrado: ${targetPath}`);
       }
 
-      const entries = readdirSync(this.configPath, { withFileTypes: true });
+      const entries = readdirSync(targetPath, { withFileTypes: true });
       const configDirs = entries.filter(entry => entry.isDirectory());
 
       for (const dir of configDirs) {
-        await this.loadConfigFromDirectory(dir.name, validateOnly);
+        await this.loadConfigFromDirectory(dir.name, validateOnly, targetPath);
       }
 
       console.log(`${this.configs.size} configurações carregadas com sucesso`);
@@ -47,9 +49,10 @@ class ImportService {
    * Carrega configurações de um diretório específico
    * @param {string} dirName - Nome do diretório
    * @param {boolean} validateOnly - Se true, apenas valida sem salvar
+   * @param {string} basePath - Caminho base para o diretório
    */
-  async loadConfigFromDirectory(dirName, validateOnly = false) {
-    const dirPath = join(this.configPath, dirName);
+  async loadConfigFromDirectory(dirName, validateOnly = false, basePath = null) {
+    const dirPath = join(basePath || this.configPath, dirName);
     const files = readdirSync(dirPath);
 
     // Procura por arquivo JSON principal (normalmente nomeado como o diretório)
