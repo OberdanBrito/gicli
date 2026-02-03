@@ -168,4 +168,4 @@ class DependencyResolver {
   }
 }
 
-module.exports = { DependencyResolver };
+export { DependencyResolver };

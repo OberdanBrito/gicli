@@ -1,4 +1,4 @@
-import { SQLiteDriver } from './drivers/sqlite.js';
+// import { SQLiteDriver } from './drivers/sqlite.js'; // Temporariamente removido para compatibilidade com Node.js
 import { SQLServerDriver } from './drivers/sqlserver.js';
 
 /**
@@ -8,7 +8,7 @@ import { SQLServerDriver } from './drivers/sqlserver.js';
 class TransportService {
   constructor() {
     this.drivers = {
-      sqlite: SQLiteDriver,
+      // sqlite: SQLiteDriver, // Temporariamente removido para compatibilidade com Node.js
       sqlserver: SQLServerDriver
     };
     this.activeDriver = null;

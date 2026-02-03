@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
 import importService from '../services/import/index.js';
 import executionService from '../services/execution/index.js';
