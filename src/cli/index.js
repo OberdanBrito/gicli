@@ -65,7 +65,8 @@ async function processJobOutput(jobConfig, jobResult, originConfig, mode, silent
 
       console.log(`[DEBUG] Connection string antes da substituição: ${connectionString}`);
 
-      const connectionStringSubstituted = environmentService.substituteDeep(connectionString, originConfig.name);
+      // Aplica substituição de variáveis de ambiente na connection_string
+      const connectionStringSubstituted = environmentService.substitute(connectionString, originConfig.name);
 
       console.log(`[DEBUG] Connection string após substituição: ${connectionStringSubstituted}`);
 
