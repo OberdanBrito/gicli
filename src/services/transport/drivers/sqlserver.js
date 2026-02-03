@@ -15,8 +15,6 @@ class SQLServerDriver {
    */
   async connect(connectionString) {
     try {
-      console.log('String de conexão recebida:', connectionString);
-      // Parse da connection string (formato: server=host;database=db;user=user;password=pass;...)
       const config = this.parseConnectionString(connectionString);
 
       this.pool = await sql.connect(config);

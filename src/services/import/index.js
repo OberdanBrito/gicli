@@ -143,7 +143,7 @@ class ImportService {
   }
 
   async loadConfigurationFromFile(filePath, validateOnly = false) {
-    const fullPath = join(process.cwd(), filePath);
+    const fullPath = isAbsolute(filePath) ? filePath : join(process.cwd(), filePath);
 
     try {
       if (!existsSync(fullPath)) {

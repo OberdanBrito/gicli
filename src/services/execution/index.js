@@ -179,8 +179,7 @@ class ExecutionService {
           console.log(`Primeiro item:`, JSON.stringify(processedResponse[0], null, 2));
         }
       } else if (typeof processedResponse === 'object' && processedResponse !== null) {
-        console.log(`Dados: Objeto com ${Object.keys(processedResponse).length} propriedades`);
-        console.log(`Propriedades:`, Object.keys(processedResponse));
+        console.log(`Dados: Objeto com ${Object.keys(processedResponse).length} propriedades`);        
       } else {
         console.log(`Dados: ${typeof processedResponse} - ${JSON.stringify(processedResponse)}`);
       }
