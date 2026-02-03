@@ -47,14 +47,25 @@ class ImportService {
     const targetPath = configPath ? join(process.cwd(), configPath) : this.configPath;
     try {
       if (!existsSync(targetPath)) {
-        throw new Error(`Diretório de configurações não encontrado: ${targetPath}`);
+        console.log(`Diretório ${targetPath} não encontrado. Tentando carregar configurações validadas de ${this.validatedPath}...`);
+        return await this.loadConfigurationsFromValidatedPath(validateOnly);
       }
 
       const entries = readdirSync(targetPath, { withFileTypes: true });
       const configDirs = entries.filter(entry => entry.isDirectory());
 
+      if (configDirs.length === 0) {
+        console.log(`Nenhum diretório de configuração encontrado em ${targetPath}. Tentando carregar configurações validadas de ${this.validatedPath}...`);
+        return await this.loadConfigurationsFromValidatedPath(validateOnly);
+      }
+
       for (const dir of configDirs) {
         await this.loadConfigFromDirectory(dir.name, validateOnly, targetPath);
+      }
+
+      if (this.configs.size === 0) {
+        console.log(`Nenhuma configuração válida encontrada em ${targetPath}. Tentando carregar configurações validadas de ${this.validatedPath}...`);
+        return await this.loadConfigurationsFromValidatedPath(validateOnly);
       }
 
       console.log(`${this.configs.size} configurações carregadas com sucesso`);
@@ -66,10 +77,39 @@ class ImportService {
   }
 
   /**
-   * Carrega configuração de um arquivo específico
-   * @param {string} filePath - Caminho completo para o arquivo
-   * @param {boolean} validateOnly - Se true, apenas valida sem salvar
+   * Carrega configurações validadas diretamente de /etc/gicli
+   * @param {boolean} validateOnly - Se true, apenas valida sem salvar arquivos
    */
+  async loadConfigurationsFromValidatedPath(validateOnly = false) {
+    try {
+      if (!existsSync(this.validatedPath)) {
+        throw new Error(`Diretório de configurações validadas não encontrado: ${this.validatedPath}`);
+      }
+
+      const files = readdirSync(this.validatedPath);
+
+      if (files.length === 0) {
+        throw new Error(`Nenhum arquivo de configuração encontrado em ${this.validatedPath}`);
+      }
+
+      for (const file of files) {
+        if (file.endsWith('.json')) {
+          const filePath = join(this.validatedPath, file);
+          await this.loadValidatedConfigurationFromFile(filePath, validateOnly);
+        }
+      }
+
+      if (this.configs.size === 0) {
+        throw new Error(`Nenhuma configuração válida encontrada em ${this.validatedPath}`);
+      }
+
+      console.log(`${this.configs.size} configurações validadas carregadas de ${this.validatedPath}`);
+      return true;
+    } catch (error) {
+      console.error('Erro ao carregar configurações validadas:', error.message);
+      throw error;
+    }
+  }
   async loadConfigurationFromFile(filePath, validateOnly = false) {
     const fullPath = join(process.cwd(), filePath);
 
@@ -135,11 +175,37 @@ class ImportService {
   }
 
   /**
-   * Carrega configurações de um diretório específico
-   * @param {string} dirName - Nome do diretório
+   * Carrega configuração validada de um arquivo (já validado anteriormente)
+   * @param {string} filePath - Caminho completo para o arquivo validado
    * @param {boolean} validateOnly - Se true, apenas valida sem salvar
-   * @param {string} basePath - Caminho base para o diretório
    */
+  async loadValidatedConfigurationFromFile(filePath, validateOnly = false) {
+    try {
+      const content = readFileSync(filePath, 'utf-8');
+      const config = JSON.parse(content);
+
+      if (validateOnly) {
+        console.log(`Configuração '${config.group}' validada (modo apenas validação)`);
+      } else {
+        // Armazena configuração usando o group como chave
+        this.configs.set(config.group, {
+          ...config,
+          _metadata: {
+            file: filePath.split('/').pop() || filePath.split('\\').pop(),
+            path: filePath,
+            validatedPath: filePath,
+            loadedAt: new Date().toISOString(),
+            validatedAt: config._metadata?.validatedAt || new Date().toISOString()
+          }
+        });
+      }
+
+      console.log(`Configuração '${config.group}' carregada de ${filePath}`);
+    } catch (error) {
+      console.error(`Erro ao carregar configuração validada ${filePath}:`, error.message);
+      throw error;
+    }
+  }
   async loadConfigFromDirectory(dirName, validateOnly = false, basePath = null) {
     const dirPath = join(basePath || this.configPath, dirName);
     const files = readdirSync(dirPath);
