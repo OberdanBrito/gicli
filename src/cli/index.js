@@ -158,6 +158,7 @@ if (importConfigs) {
     await importService.loadConfigurations(false, configDir);
     if (!silent) {
       console.log('Configurações importadas e validadas com sucesso.');
+      process.exit(0);
     }
   } catch (error) {
     console.error('Erro ao importar configurações:', error.message);
@@ -168,6 +169,7 @@ if (importConfigs) {
     await importService.loadConfigurations(true, configDir);
     if (!silent) {
       console.log('Configurações validadas com sucesso.');
+      process.exit(0);
     }
   } catch (error) {
     console.error('Erro ao validar configurações:', error.message);

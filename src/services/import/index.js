@@ -10,11 +10,25 @@ class ImportService {
   constructor() {
     this.configs = new Map(); // Armazena configurações carregadas
     this.configPath = join(process.cwd(), 'docs');
-    this.validatedPath = join(process.cwd(), 'src/config');
+    this.validatedPath = '/etc/gicli';
 
     // Garante que o diretório de configurações validadas existe
-    if (!existsSync(this.validatedPath)) {
-      mkdirSync(this.validatedPath, { recursive: true });
+    try {
+      if (!existsSync(this.validatedPath)) {
+        mkdirSync(this.validatedPath, { recursive: true });
+      }
+    } catch (error) {
+      console.warn(`Não foi possível criar ${this.validatedPath}:`, error.message);
+      console.warn('Tentando usar sudo...');
+      // Tentar criar com sudo
+      const { execSync } = await import('child_process');
+      try {
+        execSync(`sudo mkdir -p ${this.validatedPath}`, { stdio: 'inherit' });
+        execSync(`sudo chown ${process.env.USER || 'root'} ${this.validatedPath}`, { stdio: 'inherit' });
+      } catch (sudoError) {
+        console.error('Erro ao criar diretório com sudo:', sudoError.message);
+        throw new Error(`Não foi possível criar diretório de configurações: ${this.validatedPath}`);
+      }
     }
   }
 
@@ -87,7 +101,20 @@ class ImportService {
       } else {
         // Configuração válida, salvar no diretório validado
         const validatedFilePath = join(this.validatedPath, configFile);
-        copyFileSync(filePath, validatedFilePath);
+        try {
+          copyFileSync(filePath, validatedFilePath);
+        } catch (copyError) {
+          console.warn(`Falha ao copiar para ${validatedFilePath}:`, copyError.message);
+          console.warn('Tentando usar sudo...');
+          const { execSync } = await import('child_process');
+          try {
+            execSync(`sudo cp "${filePath}" "${validatedFilePath}"`, { stdio: 'inherit' });
+            execSync(`sudo chown ${process.env.USER || 'root'} "${validatedFilePath}"`, { stdio: 'inherit' });
+          } catch (sudoError) {
+            console.error('Erro ao copiar com sudo:', sudoError.message);
+            throw new Error(`Não foi possível salvar configuração validada: ${validatedFilePath}`);
+          }
+        }
         console.log(`Configuração '${config.group}' validada e salva em ${validatedFilePath}`);
 
         // Armazena configuração usando o group como chave
