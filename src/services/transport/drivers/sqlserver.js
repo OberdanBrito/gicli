@@ -107,6 +107,32 @@ class SQLServerDriver {
   }
 
   /**
+   * Limpa tabela antes de inserir novos dados
+   * @param {string} tableName - Nome da tabela
+   */
+  async clearTable(tableName) {
+    if (!this.pool) throw new Error('Banco não conectado');
+
+    try {
+      // Tenta TRUNCATE primeiro (mais rápido, mas falha com FK)
+      const truncateSql = `TRUNCATE TABLE [${tableName}]`;
+      await this.pool.request().query(truncateSql);
+      console.log(`Tabela ${tableName} limpa com TRUNCATE`);
+    } catch (truncateError) {
+      // Se TRUNCATE falhar (provavelmente por foreign keys), usa DELETE
+      try {
+        console.log(`TRUNCATE falhou para ${tableName}, usando DELETE...`);
+        const deleteSql = `DELETE FROM [${tableName}]`;
+        await this.pool.request().query(deleteSql);
+        console.log(`Tabela ${tableName} limpa com DELETE`);
+      } catch (deleteError) {
+        console.error(`Erro ao limpar tabela ${tableName}:`, deleteError.message);
+        throw deleteError;
+      }
+    }
+  }
+
+  /**
    * Cria tabela se não existir
    * @param {string} tableName - Nome da tabela
    * @param {object} columns - Definição das colunas {coluna: tipo}

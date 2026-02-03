@@ -59,7 +59,7 @@ class TransportService {
       throw new Error('Transporte não conectado ao banco de dados');
     }
 
-    const { driver, table, columns = {}, data_path } = outputConfig;
+    const { driver, table, columns = {}, data_path, clear_before_insert = false } = outputConfig;
 
     try {
       // Extrai dados do caminho especificado, se definido
@@ -112,6 +112,12 @@ class TransportService {
           // Garante que a tabela existe (apenas na primeira iteração)
           if (i === 0) {
             await this.ensureTable(table, dataToInsert, hasIdColumn);
+            
+            // Limpa tabela antes da inserção se solicitado
+            if (clear_before_insert) {
+              console.log(`⚠️ LIMPANDO TABELA [${table}] - todos os dados existentes serão deletados`);
+              await this.activeDriver.clearTable(table);
+            }
           }
 
           try {

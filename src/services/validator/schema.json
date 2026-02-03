@@ -155,6 +155,11 @@
                     "data_path": {
                       "type": "string",
                       "description": "Caminho para os dados dentro da resposta JSON - opcional, usa resposta completa se não especificado"
+                    },
+                    "clear_before_insert": {
+                      "type": "boolean",
+                      "description": "Limpar tabela antes de inserir novos dados (para type: database)",
+                      "default": false
                     }
                   },
                   "required": ["enabled"]
