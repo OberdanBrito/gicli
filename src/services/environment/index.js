@@ -1,13 +1,84 @@
 import { homedir } from 'os';
+import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto';
 
 /**
  * Serviço de Ambiente
  * Gerencia variáveis de ambiente e substituição de placeholders $ENV_*
+ * Com suporte a criptografia de connection strings
  */
 
 class EnvironmentService {
   constructor() {
     this.envCache = new Map(); // Cache de variáveis por origem
+  }
+
+  /**
+   * Gera ou obtém a chave de criptografia
+   * @returns {Buffer} Chave de 32 bytes para AES-256
+   */
+  getEncryptionKey() {
+    let key = process.env.ENV_ENCRYPTION_KEY;
+    
+    if (!key) {
+      // Gera chave automática se não existir
+      key = randomBytes(32).toString('hex');
+      console.warn(`⚠️ Chave de criptografia gerada automaticamente. Adicione ao seu .env:`);
+      console.warn(`ENV_ENCRYPTION_KEY=${key}`);
+      process.env.ENV_ENCRYPTION_KEY = key;
+    }
+    
+    // Deriva chave de 32 bytes usando scrypt
+    return scryptSync(key, 'gicli-salt', 32);
+  }
+
+  /**
+   * Criptografa um texto usando AES-256-GCM
+   * @param {string} text - Texto para criptografar
+   * @returns {string} Texto criptografado no formato ENC:base64(iv+ciphertext+tag)
+   */
+  encrypt(text) {
+    const key = this.getEncryptionKey();
+    const iv = randomBytes(16); // IV para GCM
+    const cipher = createCipheriv('aes-256-gcm', key, iv);
+    
+    let encrypted = cipher.update(text, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    
+    const authTag = cipher.getAuthTag();
+    
+    // Combina IV + ciphertext + auth tag
+    const combined = Buffer.concat([iv, Buffer.from(encrypted, 'hex'), authTag]);
+    return 'ENC:' + combined.toString('base64');
+  }
+
+  /**
+   * Descriptografa um texto criptografado
+   * @param {string} encryptedText - Texto no formato ENC:base64(...)
+   * @returns {string} Texto descriptografado
+   */
+  decrypt(encryptedText) {
+    if (!encryptedText.startsWith('ENC:')) {
+      return encryptedText; // Não está criptografado
+    }
+    
+    try {
+      const key = this.getEncryptionKey();
+      const combined = Buffer.from(encryptedText.slice(4), 'base64');
+      
+      const iv = combined.slice(0, 16);
+      const authTag = combined.slice(-16);
+      const ciphertext = combined.slice(16, -16);
+      
+      const decipher = createDecipheriv('aes-256-gcm', key, iv);
+      decipher.setAuthTag(authTag);
+      
+      let decrypted = decipher.update(ciphertext, 'hex', 'utf8');
+      decrypted += decipher.final('utf8');
+      
+      return decrypted;
+    } catch (error) {
+      throw new Error(`Falha ao descriptografar: ${error.message}`);
+    }
   }
 
   /**
@@ -41,22 +112,24 @@ class EnvironmentService {
     // Primeiro substitui $ENV_* (mantém comportamento existente)
     const envRegex = /\$ENV_([A-Z_][A-Z0-9_]*)/g;
     result = result.replace(envRegex, (match, varName) => {
+      const fullVarName = 'ENV_' + varName; // Adiciona prefixo ENV_ de volta
+      
       // Primeiro tenta da origem específica
       if (originName) {
         const originVars = this.envCache.get(originName);
-        if (originVars && originVars[varName] !== undefined) {
-          return originVars[varName];
+        if (originVars && originVars[fullVarName] !== undefined) {
+          return originVars[fullVarName];
         }
       }
 
       // Depois tenta das variáveis de ambiente do sistema
-      const systemVar = process.env[varName];
+      const systemVar = process.env[fullVarName];
       if (systemVar !== undefined) {
         return systemVar;
       }
 
       // Se não encontrou, deixa o placeholder
-      console.warn(`Variável de ambiente não encontrada: ${varName}`);
+      console.warn(`Variável de ambiente não encontrada: ${fullVarName}`);
       return match;
     });
 
@@ -71,6 +144,16 @@ class EnvironmentService {
         return match;
       }
     });
+
+    // Finalmente, verifica se o resultado está criptografado e descriptografa
+    if (result.startsWith('ENC:')) {
+      try {
+        result = this.decrypt(result);
+      } catch (error) {
+        console.warn(`Erro ao descriptografar valor: ${error.message}`);
+        // Mantém o valor original se falhar a descriptografia
+      }
+    }
 
     return result;
   }
