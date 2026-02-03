@@ -1,4 +1,4 @@
-import { writeFileSync, existsSync, mkdirSync } from 'fs';
+import { writeFileSync, existsSync, mkdirSync, readdirSync, statSync, unlinkSync } from 'fs';
 import { join, dirname } from 'path';
 import loggerService from '../logger/index.js';
 
@@ -189,15 +189,14 @@ class FileOutputService {
    */
   listOutputFiles(outputPath) {
     try {
-      const fs = require('fs');
       const fullPath = join(process.cwd(), outputPath);
 
       if (!existsSync(fullPath)) {
         return [];
       }
 
-      return fs.readdirSync(fullPath)
-        .filter(file => fs.statSync(join(fullPath, file)).isFile())
+      return readdirSync(fullPath)
+        .filter(file => statSync(join(fullPath, file)).isFile())
         .sort();
     } catch (error) {
       loggerService.error('Erro ao listar arquivos de output', error);
@@ -212,7 +211,6 @@ class FileOutputService {
    */
   cleanupOldFiles(outputPath, maxAgeHours = 24) {
     try {
-      const fs = require('fs');
       const fullPath = join(process.cwd(), outputPath);
       const maxAge = maxAgeHours * 60 * 60 * 1000; // converter para ms
       const now = Date.now();
@@ -221,15 +219,15 @@ class FileOutputService {
         return;
       }
 
-      const files = fs.readdirSync(fullPath);
+      const files = readdirSync(fullPath);
       let cleaned = 0;
 
       for (const file of files) {
         const filePath = join(fullPath, file);
-        const stats = fs.statSync(filePath);
+        const stats = statSync(filePath);
 
         if (now - stats.mtime.getTime() > maxAge) {
-          fs.unlinkSync(filePath);
+          unlinkSync(filePath);
           cleaned++;
         }
       }

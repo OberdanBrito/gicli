@@ -1,4 +1,4 @@
-import { writeFileSync, appendFileSync, existsSync } from 'fs';
+import { writeFileSync, appendFileSync, existsSync, mkdirSync, statSync, readFileSync, unlinkSync, renameSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { format } from 'util';
 
@@ -33,7 +33,7 @@ class LoggerService {
     // Cria diretório de logs se não existir
     if (!existsSync(this.logDir)) {
       try {
-        require('fs').mkdirSync(this.logDir, { recursive: true });
+        mkdirSync(this.logDir, { recursive: true });
       } catch (error) {
         console.error('Erro ao criar diretório de logs:', error.message);
         this.logToFile = false;
@@ -215,7 +215,7 @@ class LoggerService {
    */
   checkRotation(logFile) {
     try {
-      const stats = require('fs').statSync(logFile);
+      const stats = statSync(logFile);
       if (stats.size > this.maxLogSize) {
         this.rotateLogFile();
       }
@@ -229,12 +229,10 @@ class LoggerService {
    */
   rotateLogFile() {
     try {
-      const fs = require('fs');
-
       // Remove o arquivo mais antigo se existir
       const oldestFile = join(this.logDir, `app.log.${this.maxLogFiles}`);
       if (existsSync(oldestFile)) {
-        fs.unlinkSync(oldestFile);
+        unlinkSync(oldestFile);
       }
 
       // Rotaciona os arquivos existentes
@@ -243,7 +241,7 @@ class LoggerService {
         const nextFile = join(this.logDir, `app.log.${i + 1}`);
 
         if (existsSync(currentFile)) {
-          fs.renameSync(currentFile, nextFile);
+          renameSync(currentFile, nextFile);
         }
       }
 
@@ -252,7 +250,7 @@ class LoggerService {
       const rotatedFile = join(this.logDir, 'app.log.1');
 
       if (existsSync(currentFile)) {
-        fs.renameSync(currentFile, rotatedFile);
+        renameSync(currentFile, rotatedFile);
       }
 
       console.log('Arquivo de log rotacionado');
@@ -269,8 +267,7 @@ class LoggerService {
    */
   listLogFiles() {
     try {
-      const fs = require('fs');
-      const files = fs.readdirSync(this.logDir);
+      const files = readdirSync(this.logDir);
       return files.filter(file => file.startsWith('app.log')).sort();
     } catch (error) {
       return [];
@@ -282,11 +279,10 @@ class LoggerService {
    */
   clearLogs() {
     try {
-      const fs = require('fs');
       const files = this.listLogFiles();
 
       for (const file of files) {
-        fs.unlinkSync(join(this.logDir, file));
+        unlinkSync(join(this.logDir, file));
       }
 
       console.log('Arquivos de log removidos');
