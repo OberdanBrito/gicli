@@ -1,5 +1,5 @@
 import { writeFileSync, appendFileSync, existsSync, mkdirSync, statSync, readFileSync, unlinkSync, renameSync, readdirSync } from 'fs';
-import { join } from 'path';
+import { join, basename, dirname } from 'path';
 import { format } from 'util';
 import { homedir } from 'os';
 
@@ -29,6 +29,7 @@ class LoggerService {
     this.logToFile = true; // Salvar em arquivo
     this.maxLogSize = 10 * 1024 * 1024; // 10MB por arquivo
     this.maxLogFiles = 5; // Máximo de arquivos de log
+    this.currentJobId = null; // Contexto do job atual
 
     // Define diretório de logs com prioridades
     this.logDir = this.determineLogDirectory();
@@ -41,6 +42,17 @@ class LoggerService {
       } catch (error) {
         console.error('Erro ao criar diretório de logs:', error.message);
         this.logToFile = false;
+      }
+    }
+
+    // Cria subdiretório de jobs se não existir
+    this.jobsLogDir = join(this.logDir, 'jobs');
+    if (!existsSync(this.jobsLogDir)) {
+      try {
+        mkdirSync(this.jobsLogDir, { recursive: true });
+        console.log(`Diretório de logs de jobs criado: ${this.jobsLogDir}`);
+      } catch (error) {
+        console.warn('Erro ao criar diretório de logs de jobs:', error.message);
       }
     }
   }
@@ -92,6 +104,21 @@ class LoggerService {
    */
   setSilent(silent) {
     this.silent = silent;
+  }
+
+  /**
+   * Define o contexto do job atual
+   * @param {string} jobId - ID do job atual
+   */
+  setJobContext(jobId) {
+    this.currentJobId = jobId;
+  }
+
+  /**
+   * Limpa o contexto do job atual
+   */
+  clearJobContext() {
+    this.currentJobId = null;
   }
 
   /**
@@ -155,6 +182,7 @@ class LoggerService {
    * @param {object} metadata - Metadados adicionais (opcional)
    */
   jobStart(jobId, metadata = null) {
+    this.setJobContext(jobId);
     this.log('INFO', `Iniciando execução do job: ${jobId}`, metadata);
   }
 
@@ -171,6 +199,7 @@ class LoggerService {
     };
 
     this.log('INFO', `Job ${jobId} finalizado`, metadata);
+    this.clearJobContext();
   }
 
   /**
@@ -180,11 +209,13 @@ class LoggerService {
    * @param {number} duration - Duração até o erro (opcional)
    */
   jobError(jobId, error, duration = null) {
+    this.setJobContext(jobId);
     const metadata = {
       duration: duration ? `${duration}ms` : undefined
     };
 
     this.error(`Erro na execução do job ${jobId}`, error);
+    this.clearJobContext();
   }
 
   /**
@@ -240,7 +271,13 @@ class LoggerService {
    * @returns {string} Caminho do arquivo
    */
   getCurrentLogFile() {
-    return join(this.logDir, 'app.log');
+    if (this.currentJobId) {
+      // Log específico do job
+      return join(this.jobsLogDir, `${this.currentJobId}.log`);
+    } else {
+      // Log do sistema
+      return join(this.logDir, 'app.log');
+    }
   }
 
   /**
@@ -251,7 +288,7 @@ class LoggerService {
     try {
       const stats = statSync(logFile);
       if (stats.size > this.maxLogSize) {
-        this.rotateLogFile();
+        this.rotateLogFile(logFile);
       }
     } catch (error) {
       // Ignora erros na verificação de rotação
@@ -260,19 +297,23 @@ class LoggerService {
 
   /**
    * Rotaciona arquivo de log
+   * @param {string} logFile - Caminho do arquivo a rotacionar
    */
-  rotateLogFile() {
+  rotateLogFile(logFile) {
     try {
+      const fileName = basename(logFile);
+      const fileDir = dirname(logFile);
+      
       // Remove o arquivo mais antigo se existir
-      const oldestFile = join(this.logDir, `app.log.${this.maxLogFiles}`);
+      const oldestFile = join(fileDir, `${fileName}.${this.maxLogFiles}`);
       if (existsSync(oldestFile)) {
         unlinkSync(oldestFile);
       }
 
       // Rotaciona os arquivos existentes
       for (let i = this.maxLogFiles - 1; i >= 1; i--) {
-        const currentFile = join(this.logDir, `app.log.${i}`);
-        const nextFile = join(this.logDir, `app.log.${i + 1}`);
+        const currentFile = join(fileDir, `${fileName}.${i}`);
+        const nextFile = join(fileDir, `${fileName}.${i + 1}`);
 
         if (existsSync(currentFile)) {
           renameSync(currentFile, nextFile);
@@ -280,14 +321,12 @@ class LoggerService {
       }
 
       // Move o arquivo atual
-      const currentFile = join(this.logDir, 'app.log');
-      const rotatedFile = join(this.logDir, 'app.log.1');
-
-      if (existsSync(currentFile)) {
-        renameSync(currentFile, rotatedFile);
+      if (existsSync(logFile)) {
+        const rotatedFile = join(fileDir, `${fileName}.1`);
+        renameSync(logFile, rotatedFile);
       }
 
-      console.log('Arquivo de log rotacionado');
+      console.log(`Arquivo de log rotacionado: ${fileName}`);
     } catch (error) {
       if (!this.silent) {
         console.error('Erro ao rotacionar arquivo de log:', error.message);

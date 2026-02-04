@@ -261,6 +261,21 @@ O GI CLI salva logs de processamento automaticamente seguindo padrão Linux:
 2. **`/var/log/gicli/`** - Padrão Linux (recomendado para servidores)
 3. **`~/.gicli/logs/`** - Fallback automático
 
+**Estrutura de arquivos**:
+```
+/var/log/gicli/
+├── app.log              # Logs do sistema (CLI, importação, etc)
+└── jobs/
+    ├── rhid_empresas.log
+    ├── rhid_usuarios.log
+    └── outro_job.log
+```
+
+**Logs individuais por job**:
+- Cada job tem seu próprio arquivo de log
+- Logs do sistema mantidos em `app.log`
+- Rotação individual por arquivo (10MB, 5 arquivos)
+
 ### 🔧 Configuração Recomendada
 
 **Para ambiente de produção**:
