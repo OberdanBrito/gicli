@@ -10,7 +10,7 @@
 
 ### Status Final: 100% ✅
 - ✅ **Segurança**: Todos os arquivos sensíveis removidos e protegidos
-- ✅ **Organização**: Licença consistente, documentação completa
+- ✅ **Organização**: Licença consistente (MIT), documentação completa
 - ✅ **CI/CD**: Workflows funcionais com testes automatizados
 
 ## 🚨 Melhorias de Segurança Implementadas
@@ -27,7 +27,7 @@
 ### Proteções Adicionais
 - Atualizado `.gitignore` para prevenir commits futuros
 - Seção completa de segurança no README.md
-- Licença padronizada para ISC
+- Licença padronizada para MIT
 
 ## 🔧 CI/CD Implementado
 

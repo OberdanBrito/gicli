@@ -33,7 +33,7 @@ jobs:
       run: npm test
     
     - name: Security audit
-      run: npm audit --audit-level=moderate
+      run: npm audit --audit-level=high
     
     - name: Update version (manual trigger only)
       if: github.event_name == 'workflow_dispatch'

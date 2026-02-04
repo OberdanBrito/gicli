@@ -143,6 +143,10 @@ output/
 tests/
 database/
 docs/
+!docs/rhid/rhid.example.json
+
+# CI debug artifacts
+logs_*/
 
 # package-lock.json
 .windsurf
