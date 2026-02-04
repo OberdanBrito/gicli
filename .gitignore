@@ -144,7 +144,7 @@ tests/
 database/
 docs/
 
-package-lock.json
+# package-lock.json
 .windsurf
 
 src/config/*.json
