@@ -4,6 +4,7 @@ import environmentService from '../environment/index.js';
 import sessionService from '../session/index.js';
 import fileOutputService from '../file-output/index.js';
 import transportService from '../transport/index.js';
+import loggerService from '../logger/index.js';
 
 /**
  * Serviço de Execução
@@ -34,7 +35,7 @@ class ExecutionService {
 
     try {
       if (!silent) {
-        console.log(`Iniciando execução do job: ${jobId}`);
+        loggerService.info(`Iniciando execução do job: ${jobId}`);
       }
 
       // Carrega variáveis de ambiente
@@ -73,7 +74,7 @@ class ExecutionService {
 
     } catch (error) {
       if (!silent) {
-        console.error(`Erro na execução do job ${jobId}:`, error.message);
+        loggerService.error(`Erro na execução do job ${jobId}:`, error.message);
       }
       return {
         success: false,
@@ -149,21 +150,21 @@ class ExecutionService {
 
       // Se recebeu 401 e ainda não tentou renovar auth, tenta novamente
       if (response.status === 401 && jobConfig.session_name && !authRetryAttempted) {
-        console.log(`Recebido 401 para job ${jobConfig.id}, tentando renovar autenticação...`);
+        loggerService.info(`Recebido 401 para job ${jobConfig.id}, tentando renovar autenticação...`);
         authRetryAttempted = true;
 
         try {
           // Renova autenticação
           await authService.refreshAuthentication(originConfig, this.findAuthJob(originConfig), mode);
-          console.log(`Autenticação renovada para ${originConfig.name}, tentando requisição novamente...`);
+          loggerService.info(`Autenticação renovada para ${originConfig.name}, tentando requisição novamente...`);
 
           // Refaz a requisição com novo token
           requestResult = await makeRequest();
           response = requestResult.response;
           finalUrl = requestResult.finalUrl;
-          console.log(`Requisição bem-sucedida após renovação de token`);
+          loggerService.info(`Requisição bem-sucedida após renovação de token`);
         } catch (authError) {
-          console.warn(`Falha ao renovar autenticação: ${authError.message}`);
+          loggerService.warn(`Falha ao renovar autenticação: ${authError.message}`);
           // Continua com a resposta original de erro
         }
       }
@@ -172,16 +173,16 @@ class ExecutionService {
       const processedResponse = this.processResponse(response, jobConfig.response_format);
 
       // Log da resposta para debug
-      console.log(`Resposta recebida - Status: ${response.status}, Tamanho: ${JSON.stringify(processedResponse).length} chars`);
+      loggerService.info(`Resposta recebida - Status: ${response.status}, Tamanho: ${JSON.stringify(processedResponse).length} chars`);
       if (Array.isArray(processedResponse)) {
-        console.log(`Dados: Array com ${processedResponse.length} itens`);
+        loggerService.info(`Dados: Array com ${processedResponse.length} itens`);
         if (processedResponse.length > 0) {
-          console.log(`Primeiro item:`, JSON.stringify(processedResponse[0], null, 2));
+          loggerService.info(`Primeiro item:`, JSON.stringify(processedResponse[0], null, 2));
         }
       } else if (typeof processedResponse === 'object' && processedResponse !== null) {
-        console.log(`Dados: Objeto com ${Object.keys(processedResponse).length} propriedades`);        
+        loggerService.info(`Dados: Objeto com ${Object.keys(processedResponse).length} propriedades`);        
       } else {
-        console.log(`Dados: ${typeof processedResponse} - ${JSON.stringify(processedResponse)}`);
+        loggerService.info(`Dados: ${typeof processedResponse} - ${JSON.stringify(processedResponse)}`);
       }
 
       return {
@@ -197,13 +198,13 @@ class ExecutionService {
     } catch (error) {
       // Se é erro 401 e ainda não tentou renovar auth, tenta uma vez
       if (error.message.includes('HTTP 401') && jobConfig.session_name && !authRetryAttempted) {
-        console.log(`Erro 401 na primeira tentativa para job ${jobConfig.id}, tentando renovar autenticação...`);
+        loggerService.info(`Erro 401 na primeira tentativa para job ${jobConfig.id}, tentando renovar autenticação...`);
         authRetryAttempted = true;
 
         try {
           // Renova autenticação
           await authService.refreshAuthentication(originConfig, this.findAuthJob(originConfig), mode);
-          console.log(`Autenticação renovada para ${originConfig.name}, tentando requisição novamente...`);
+          loggerService.info(`Autenticação renovada para ${originConfig.name}, tentando requisição novamente...`);
 
           // Refaz a requisição com novo token
           const retryResult = await makeRequest();
@@ -211,7 +212,7 @@ class ExecutionService {
           const finalUrl = retryResult.finalUrl;
           const processedResponse = this.processResponse(response, jobConfig.response_format);
 
-          console.log(`Requisição bem-sucedida após renovação de token`);
+          loggerService.info(`Requisição bem-sucedida após renovação de token`);
           return {
             url: response.url || finalUrl,
             method: jobConfig.method,
@@ -223,7 +224,7 @@ class ExecutionService {
           };
 
         } catch (retryError) {
-          console.warn(`Falha na tentativa de retry após renovação: ${retryError.message}`);
+          loggerService.warn(`Falha na tentativa de retry após renovação: ${retryError.message}`);
           throw error; // Lança o erro original
         }
       }

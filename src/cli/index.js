@@ -393,46 +393,56 @@ if (importConfigs) {
       // Aplica template variables e substituições de ambiente
       let processedJobConfig = environmentService.substituteDeep(jobConfig, originConfig.name, jobResults);
 
-      // Executa o job
-      const result = await executionService.executeJob(originConfig, processedJobConfig, mode, silent);
+      // Inicia contexto de logging para este job
+      loggerService.jobStart(jobId, { origin: originConfig.name, mode });
 
-      if (result.success) {
-        // Armazena resultado na sessão para uso por jobs dependentes
-        const sessionKey = `job_result_${jobId}`;
-        sessionService.set(sessionKey, {
-          data: result.response.data,
-          headers: result.response.headers,
-          status: result.response.status,
-          timestamp: result.response.timestamp
-        }, 3600000); // 1 hora de TTL
+      let result = null;
+      try {
+        // Executa o job
+        result = await executionService.executeJob(originConfig, processedJobConfig, mode, silent);
 
-        // Também armazena em jobResults para template resolution
-        jobResults[jobId] = {
-          data: result.response.data,
-          headers: result.response.headers,
-          status: result.response.status,
-          timestamp: result.response.timestamp
-        };
+        if (result.success) {
+          // Armazena resultado na sessão para uso por jobs dependentes
+          const sessionKey = `job_result_${jobId}`;
+          sessionService.set(sessionKey, {
+            data: result.response.data,
+            headers: result.response.headers,
+            status: result.response.status,
+            timestamp: result.response.timestamp
+          }, 3600000); // 1 hora de TTL
 
-        if (!silent) {
-          console.log(`Job '${jobId}' executado com sucesso`);
-        }
+          // Também armazena em jobResults para template resolution
+          jobResults[jobId] = {
+            data: result.response.data,
+            headers: result.response.headers,
+            status: result.response.status,
+            timestamp: result.response.timestamp
+          };
 
-        // Processa saída se configurado
-        const outputResult = await processJobOutput(processedJobConfig, result, originConfig, mode, silent);
-
-        // Se for modo teste E não silencioso, mostra resultado
-        if (mode === 'test' && !silent) {
-          const resultToShow = { ...result };
-          if (outputResult) {
-            resultToShow.output = outputResult;
+          if (!silent) {
+            console.log(`Job '${jobId}' executado com sucesso`);
           }
-          console.log(`Resultado de ${jobId}:`, JSON.stringify(resultToShow, null, 2));
-        }
 
-      } else {
-        throw new Error(`Falha no job ${jobId}: ${result.error}`);
+          // Processa saída se configurado
+          const outputResult = await processJobOutput(processedJobConfig, result, originConfig, mode, silent);
+
+          // Se for modo teste E não silencioso, mostra resultado
+          if (mode === 'test' && !silent) {
+            const resultToShow = { ...result };
+            if (outputResult) {
+              resultToShow.output = outputResult;
+            }
+            console.log(`Resultado de ${jobId}:`, JSON.stringify(resultToShow, null, 2));
+          }
+
+        } else {
+          throw new Error(`Falha no job ${jobId}: ${result.error}`);
+        }
+      } finally {
+        // Limpa contexto de logging (sempre executado, mesmo em caso de erro)
+        loggerService.jobEnd(jobId, result?.success || false);
       }
+
     }
 
     if (!silent) {
