@@ -45,5 +45,5 @@
     "mssql": "^10.0.1"
   },
   "author": "Oberdan Brito <oberdanbdj@gmail.com>",
-  "license": "ISC"
+  "license": "MIT"
 }

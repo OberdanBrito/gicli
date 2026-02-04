@@ -1,6 +1,6 @@
 # Gestor de Integrações (GI) CLI
 
-[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Uma ferramenta de linha de comando poderosa para executar integrações com APIs REST e WebServices SOAP de forma dinâmica, reutilizável e automatizada. Inspirada no Postman e Kong, mas focada em CLI + automação + persistência de dados.
 
@@ -248,7 +248,7 @@ gicli/
 
 ## 📄 Licença
 
-Este projeto está licenciado sob a [ISC License](LICENSE) - veja o arquivo LICENSE para detalhes.
+Este projeto está licenciado sob a [MIT License](LICENSE) - veja o arquivo LICENSE para detalhes.
 
 ## 🤝 Suporte
 
