@@ -142,10 +142,11 @@ vite.config.ts.timestamp-*
 output/
 tests/
 database/
-#docs/
+docs/
 
 package-lock.json
 .windsurf
 
 src/config/*.json
+docs/rhid/rhid.json
 .npmrc

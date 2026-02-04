@@ -150,6 +150,52 @@ O GI é construído em módulos independentes (princípio de responsabilidade ú
 - **session**: Gerenciamento de estado temporário
 - **logger**: Registro de eventos
 
+## 🔐 Segurança
+
+### ⚠️ IMPORTANTE: Proteja Suas Credenciais
+
+**NUNCA** commit arquivos `.env` com dados reais no controle de versão!
+
+#### Como Configurar Variáveis de Ambiente
+
+1. **Copie o arquivo de exemplo**:
+   ```bash
+   cp .env.example .env-server
+   ```
+
+2. **Edite o arquivo `.env-server`** com suas credenciais reais:
+   ```bash
+   # Variáveis do grupo RHID
+   ENV_RHID_PASSWORD=sua_senha_real_aqui
+   ENV_ENCRYPTION_KEY=sua_chave_real_aqui_32_chars
+   ENV_SQLSERVER_PASSWORD=sua_senha_sql_real_aqui
+   ```
+
+3. **Verifique se `.env-server` está no .gitignore** (já configurado):
+   ```gitignore
+   .env-server
+   ```
+
+#### Boas Práticas de Segurança
+
+- ✅ Use senhas fortes e chaves de criptografia de 32 caracteres
+- ✅ Mantenha o arquivo `.env-server` apenas no ambiente de execução
+- ✅ Use variáveis de ambiente em configurações JSON: `$ENV_NOME_VARIAVEL`
+- ✅ O sistema criptografa dados sensíveis automaticamente
+- ❌ **NUNCA** commit `.env-server` com dados reais
+- ❌ **NUNCA** compartilhe credenciais em issues ou pull requests
+
+#### Exemplo de Uso Seguro
+
+```json
+{
+  "payload": {
+    "username": "$ENV_USERNAME",
+    "password": "$ENV_PASSWORD"
+  }
+}
+```
+
 ## 🛠️ Desenvolvimento e Contribuição
 
 ### Como Contribuir
