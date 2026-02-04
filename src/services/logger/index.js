@@ -1,6 +1,7 @@
 import { writeFileSync, appendFileSync, existsSync, mkdirSync, statSync, readFileSync, unlinkSync, renameSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { format } from 'util';
+import { homedir } from 'os';
 
 /**
  * Serviço de Logger
@@ -26,7 +27,7 @@ class LoggerService {
     this.logLevel = LOG_LEVELS.INFO; // Nível padrão
     this.silent = false; // Modo silencioso para produção
     this.logToFile = true; // Salvar em arquivo
-    this.logDir = join(process.cwd(), 'logs');
+    this.logDir = join(homedir(), '.gicli', 'logs'); // Usa ~/.gicli/logs como padrão
     this.maxLogSize = 10 * 1024 * 1024; // 10MB por arquivo
     this.maxLogFiles = 5; // Máximo de arquivos de log
 
@@ -34,6 +35,7 @@ class LoggerService {
     if (!existsSync(this.logDir)) {
       try {
         mkdirSync(this.logDir, { recursive: true });
+        console.log(`Diretório de logs criado: ${this.logDir}`);
       } catch (error) {
         console.error('Erro ao criar diretório de logs:', error.message);
         this.logToFile = false;
