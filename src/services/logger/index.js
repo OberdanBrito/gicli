@@ -27,9 +27,11 @@ class LoggerService {
     this.logLevel = LOG_LEVELS.INFO; // Nível padrão
     this.silent = false; // Modo silencioso para produção
     this.logToFile = true; // Salvar em arquivo
-    this.logDir = join(homedir(), '.gicli', 'logs'); // Usa ~/.gicli/logs como padrão
     this.maxLogSize = 10 * 1024 * 1024; // 10MB por arquivo
     this.maxLogFiles = 5; // Máximo de arquivos de log
+
+    // Define diretório de logs com prioridades
+    this.logDir = this.determineLogDirectory();
 
     // Cria diretório de logs se não existir
     if (!existsSync(this.logDir)) {
@@ -41,6 +43,36 @@ class LoggerService {
         this.logToFile = false;
       }
     }
+  }
+
+  /**
+   * Determina o diretório de logs seguindo padrão Linux com fallback
+   * @returns {string} Caminho do diretório de logs
+   */
+  determineLogDirectory() {
+    // 1. Prioridade: Variável de ambiente
+    if (process.env.LOG_DIR) {
+      console.log(`Usando LOG_DIR personalizado: ${process.env.LOG_DIR}`);
+      return process.env.LOG_DIR;
+    }
+
+    // 2. Padrão Linux: /var/log/gicli
+    const systemLogDir = '/var/log/gicli';
+    try {
+      // Tenta criar o diretório para testar permissões
+      if (!existsSync(systemLogDir)) {
+        mkdirSync(systemLogDir, { recursive: true });
+      }
+      console.log(`Usando diretório padrão Linux: ${systemLogDir}`);
+      return systemLogDir;
+    } catch (error) {
+      console.warn(`Não foi possível usar /var/log/gicli: ${error.message}`);
+    }
+
+    // 3. Fallback: ~/.gicli/logs
+    const fallbackDir = join(homedir(), '.gicli', 'logs');
+    console.log(`Usando diretório fallback: ${fallbackDir}`);
+    return fallbackDir;
   }
 
   /**

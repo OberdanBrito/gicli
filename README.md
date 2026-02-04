@@ -250,6 +250,56 @@ gicli/
 
 Este projeto está licenciado sob a [MIT License](LICENSE) - veja o arquivo LICENSE para detalhes.
 
+## 📝 Logs e Monitoramento
+
+O GI CLI salva logs de processamento automaticamente seguindo padrão Linux:
+
+### 📍 Local dos Logs
+
+**Prioridade de diretórios**:
+1. **`LOG_DIR`** - Variável de ambiente (personalizado)
+2. **`/var/log/gicli/`** - Padrão Linux (recomendado para servidores)
+3. **`~/.gicli/logs/`** - Fallback automático
+
+### 🔧 Configuração Recomendada
+
+**Para ambiente de produção**:
+```bash
+# Criar diretório de logs do sistema
+sudo mkdir -p /var/log/gicli
+sudo chown $USER /var/log/gicli
+
+# Verificar funcionamento
+gicli -t -j nome_do_job
+tail -f /var/log/gicli/app.log
+```
+
+**Para ambiente de desenvolvimento**:
+```bash
+# Usará automaticamente ~/.gicli/logs
+gicli -t -j nome_do_job
+tail -f ~/.gicli/logs/app.log
+```
+
+### 📊 Variáveis de Ambiente
+
+```bash
+# Personalizar diretório de logs
+export LOG_DIR=/caminho/personalizado/logs
+
+# Nível de log (DEBUG, INFO, WARN, ERROR)
+export LOG_LEVEL=DEBUG
+
+# Modo silencioso (apenas arquivo)
+export LOG_SILENT=true
+```
+
+### 🔄 Rotação de Logs
+
+- **Tamanho máximo**: 10MB por arquivo
+- **Máximo de arquivos**: 5 (app.log, app.log.1, ..., app.log.5)
+- **Rotação automática**: Quando atinge 10MB
+
 ## 🤝 Suporte
 
 - **Issues**: [GitHub Issues](https://github.com/oberdanbrito/gicli/issues)
