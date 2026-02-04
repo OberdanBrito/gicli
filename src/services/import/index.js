@@ -12,7 +12,7 @@ import dotenv from 'dotenv';
 class ImportService {
   constructor() {
     this.configs = new Map(); // Armazena configurações carregadas
-    this.configPath = join(process.cwd(), 'docs');
+    this.configPath = '/etc/gicli';
     this.validatedPath = '/etc/gicli';
     this.processedVariables = new Set(); // Evita notificações duplicadas
 
