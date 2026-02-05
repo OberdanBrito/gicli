@@ -54,6 +54,19 @@ async function run() {
       console.log(`Arquivo gerado: ${fileName}`);
       console.log(`Conteúdo: ${JSON.stringify(payload, null, 2)}\n`);
 
+      // Deletar registros existentes para evitar duplicatas
+      const idsList = chunks[index].join(',');
+      const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+      const deleteQuery = `DELETE FROM dbo.RHiDApuracaoPonto WHERE idPerson IN (${idsList}) AND CONVERT(DATE, DataInsercao) = '${today}'`;
+      
+      try {
+        await pool.request().query(deleteQuery);
+        console.log(`Registros antigos deletados para IDs: ${idsList} e data: ${today}`);
+      } catch (deleteError) {
+        console.error(`Erro ao deletar registros: ${deleteError.message}`);
+        // Opcional: continue ou pare
+      }
+
       // Comente essa linha para teste (apenas gerar arquivos)
       execSync(`${gicliPath} -p -j rhid_apuracao_ponto --payload-file ${fileName}`, { stdio: 'inherit' });
     }
