@@ -1,5 +1,6 @@
 import { homedir } from 'os';
 import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto';
+import { config } from 'dotenv';
 
 /**
  * Serviço de Ambiente
@@ -87,6 +88,14 @@ class EnvironmentService {
    * @param {string} originName - Nome da origem
    */
   load(originName) {
+    // Carrega explicitamente o .env para garantir variáveis disponíveis
+    const result = config({ path: '.env', override: true });
+    if (result.error) {
+      console.warn('Aviso: .env não encontrado ou inválido:', result.error.message);
+    } else {
+      console.log(`Arquivo .env carregado explicitamente. Variáveis: ${Object.keys(result.parsed).length}`);
+    }
+    
     // Como usamos dotenv no import service, as variáveis já estão em process.env
     // Não precisamos mais carregar arquivos .env específicos por origem
     console.log(`Usando variáveis de ambiente do sistema para ${originName}`);

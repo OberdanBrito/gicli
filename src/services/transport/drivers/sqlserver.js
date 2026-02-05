@@ -96,6 +96,11 @@ class SQLServerDriver {
     config.options = config.options || {};
     config.options.enableArithAbort = true;
     
+    // Configurações de timeout para operações mais lentas
+    config.requestTimeout = 50000; // 50 segundos para queries
+    config.connectionTimeout = 30000; // 30 segundos para conexão
+    config.cancelTimeout = 5000; // 5 segundos para cancelamento
+    
     // Se TrustServerCertificate=true, desabilita encrypt para evitar problemas com IP
     if (config.options.trustServerCertificate && config.options.encrypt !== false) {
       config.options.encrypt = false;
@@ -139,6 +144,10 @@ class SQLServerDriver {
   async createTable(tableName, columns, hasIdColumn = false) {
     if (!this.pool) throw new Error('Banco não conectado');
 
+    // Debug: Mostrar colunas recebidas
+    console.log(`DEBUG CREATE TABLE - ${tableName}:`, Object.keys(columns));
+    console.log(`DEBUG CREATE TABLE - columns object:`, columns);
+
     const columnDefs = Object.entries(columns)
       .map(([col, type]) => `[${col}] ${type}`)
       .join(', ');
@@ -152,9 +161,12 @@ class SQLServerDriver {
     const sql = `IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='${tableName}' AND xtype='U')
                  CREATE TABLE [${tableName}] (
                    ${idColumn}
-                   ${columnDefs},
-                   [created_at] DATETIME2 DEFAULT GETDATE()
+                   ${columnDefs}
                  )`;
+
+    // Debug: Mostrar SQL final gerado
+    console.log('DEBUG CREATE TABLE - SQL gerado:');
+    console.log(sql);
 
     try {
       await this.pool.request().query(sql);

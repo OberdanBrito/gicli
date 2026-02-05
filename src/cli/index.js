@@ -50,6 +50,7 @@ Argumentos disponíveis:
   -d, --dir           Diretório de configurações (padrão: docs/)
   -f, --file          Arquivo de configuração específico
   -s, --silent        Reduz as mensagens de saída na tela
+  --payload-file      Arquivo JSON com payload dinâmico para a requisição
   -h, --help          Exibe esta mensagem de ajuda`);
 }
 
@@ -258,6 +259,7 @@ let verbose = false;
 let silent = false;
 let configDir = null;
 let configFile = null;
+let payloadFile = null;
 
 for (let i = 0; i < args.length; i++) {
   const arg = args[i];
@@ -298,6 +300,9 @@ for (let i = 0; i < args.length; i++) {
     case '-s':
     case '--silent':
       silent = true;
+      break;
+    case '--payload-file':
+      payloadFile = args[++i];
       break;
     default:
       console.error(`Argumento desconhecido: ${arg}`);
@@ -392,6 +397,19 @@ if (importConfigs) {
 
       // Aplica template variables e substituições de ambiente
       let processedJobConfig = environmentService.substituteDeep(jobConfig, originConfig.name, jobResults);
+
+      // Se payload file foi especificado, ler e injetar no payload
+      if (payloadFile) {
+        try {
+          const payloadContent = readFileSync(payloadFile, 'utf-8');
+          processedJobConfig.payload = JSON.parse(payloadContent);
+          if (!silent) {
+            console.log(`Payload dinâmico carregado de: ${payloadFile}`);
+          }
+        } catch (error) {
+          throw new Error(`Erro ao ler payload file '${payloadFile}': ${error.message}`);
+        }
+      }
 
       // Inicia contexto de logging para este job
       loggerService.jobStart(jobId, { origin: originConfig.name, mode });

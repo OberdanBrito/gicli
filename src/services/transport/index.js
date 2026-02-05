@@ -56,6 +56,8 @@ class TransportService {
    * @param {object} originConfig - Configuração da origem (para herdar connection_string)
    */
   async processDatabaseOutput(responseData, outputConfig, metadata = {}, originConfig = {}) {
+    console.log('=== PROCESS DATABASE OUTPUT STARTED ===');
+    
     if (!this.connected || !this.activeDriver) {
       throw new Error('Transporte não conectado ao banco de dados');
     }
@@ -76,10 +78,18 @@ class TransportService {
         dataToProcess = this.extractValue(responseData, data_path);
         if (dataToProcess === undefined) {
           console.warn(`Caminho '${data_path}' não encontrado na resposta. Usando resposta completa.`);
-          dataToProcess = responseData;
         }
-        console.log(`Dados extraídos do caminho '${data_path}':`, Array.isArray(dataToProcess) ? `${dataToProcess.length} itens` : 'objeto único');
       }
+      
+      // Converte objeto com chaves numéricas para array
+      if (dataToProcess && typeof dataToProcess === 'object' && !Array.isArray(dataToProcess)) {
+        const keys = Object.keys(dataToProcess);
+        if (keys.length > 0 && keys.every(k => /^\d+$/.test(k))) {
+          console.log(`Convertendo objeto com chaves numéricas para array (${keys.length} itens)`);
+          dataToProcess = Object.values(dataToProcess);
+        }
+      }
+      console.log(`DEBUG PROCESS - Tipo de dados: ${Array.isArray(dataToProcess) ? `Array[${dataToProcess.length}]` : typeof dataToProcess}`);
 
       let recordsInserted = 0;
       let hasIdColumn = false;
@@ -106,6 +116,7 @@ class TransportService {
         }
 
         console.log(`Processando array com ${dataToProcess.length} itens`);
+        console.log(`=== INICIANDO LOOP DE INSERÇÃO ===`);
 
         // Processa cada item do array
         for (let i = 0; i < dataToProcess.length; i++) {
@@ -119,6 +130,12 @@ class TransportService {
 
           // Garante que a tabela existe (apenas na primeira iteração)
           if (i === 0) {
+            // Se clear_before_insert, força recriação da tabela para schema correto
+            if (clear_before_insert) {
+              console.log(`Forçando recriação da tabela [${table}] para schema correto`);
+              await this.activeDriver.query(`DROP TABLE IF EXISTS [${table}]`);
+            }
+            
             await this.ensureTable(table, dataToInsert, hasIdColumn);
             
             // Limpa tabela antes da inserção se solicitado
@@ -186,14 +203,32 @@ class TransportService {
     // Se columnMapping estiver vazio, usa estrutura plana
     if (Object.keys(columnMapping).length === 0) {
       if (typeof responseData === 'object' && responseData !== null) {
-        Object.assign(data, responseData);
+        // Serializa arrays/objetos automaticamente
+        for (const [key, value] of Object.entries(responseData)) {
+          // Pula campos que conflitam com colunas automáticas do sistema
+          if (key === 'created_at' || key === 'updated_at') {
+            continue;
+          }
+          
+          if (Array.isArray(value) || (typeof value === 'object' && value !== null)) {
+            data[key] = JSON.stringify(value);
+          } else {
+            data[key] = value;
+          }
+        }
       } else {
         data.response = responseData;
       }
     } else {
       // Usa mapeamento personalizado
       for (const [field, column] of Object.entries(columnMapping)) {
-        data[column] = this.extractValue(responseData, field);
+        const value = this.extractValue(responseData, field);
+        // Serializa arrays/objetos automaticamente
+        if (Array.isArray(value) || (typeof value === 'object' && value !== null)) {
+          data[column] = JSON.stringify(value);
+        } else {
+          data[column] = value;
+        }
       }
     }
 
@@ -325,18 +360,28 @@ class TransportService {
    * @returns {object} Mapeamento coluna -> tipo
    */
   inferColumnsFromData(sampleData) {
+    // Debug: Verificar sampleData real
+    console.log('DEBUG INFER - sampleData keys:', Object.keys(sampleData));
+    console.log('DEBUG INFER - has created_at:', sampleData.hasOwnProperty('created_at'));
+    console.log('DEBUG INFER - created_at value:', sampleData.created_at);
+    
     const columns = {};
 
     for (const [key, value] of Object.entries(sampleData)) {
-      if (key !== 'created_at') { // Evita conflito com coluna padrão
-        columns[key] = this.inferColumnType(value);
+      // Pula campos que conflitam com colunas automáticas do sistema
+      if (key === 'created_at' || key === 'updated_at') {
+        continue;
       }
+      columns[key] = this.inferColumnType(value);
     }
 
-    // Adiciona colunas padrão se não existirem
-    if (!('created_at' in sampleData)) {
+    // Adiciona colunas padrão apenas se não existirem nos dados
+    if (!sampleData.hasOwnProperty('created_at')) {
       columns.created_at = 'DATETIME';
     }
+
+    // Debug: Mostrar columns final
+    console.log('DEBUG INFER - final columns:', JSON.stringify(columns, null, 2));
 
     return columns;
   }
@@ -351,7 +396,14 @@ class TransportService {
 
     switch (typeof value) {
       case 'number':
-        return Number.isInteger(value) ? 'INTEGER' : 'REAL';
+        if (Number.isInteger(value)) {
+          // Verifica se excede capacidade do INT (SQL Server: -2,147,483,648 a 2,147,483,647)
+          if (value > 2147483647 || value < -2147483648) {
+            return 'BIGINT';
+          }
+          return 'INTEGER';
+        }
+        return 'REAL';
       case 'boolean':
         return 'INTEGER'; // SQLite usa 0/1 para boolean
       case 'string':
@@ -361,7 +413,7 @@ class TransportService {
         }
         return 'TEXT';
       case 'object':
-        return 'TEXT'; // JSON string
+        return 'NVARCHAR(MAX)'; // JSON string para SQL Server
       default:
         return 'TEXT';
     }
