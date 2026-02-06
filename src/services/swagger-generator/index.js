@@ -92,7 +92,7 @@ class SwaggerGeneratorService {
     // Gerar jobs para cada endpoint
     Object.entries(paths).forEach(([path, methods]) => {
       Object.entries(methods).forEach(([method, operation]) => {
-        if (typeof operation === 'object' && operation.operationId) {
+        if (typeof operation === 'object' && method.toLowerCase() !== 'parameters') {
           const job = this.generateRequestJob(path, method, operation, sessionName);
           jobs.push(job);
         }
@@ -142,7 +142,7 @@ class SwaggerGeneratorService {
    */
   generateRequestJob(path, method, operation, sessionName) {
     const jobId = this.generateJobId(operation.operationId, path, method);
-    const jobName = operation.summary || operation.operationId;
+    const jobName = operation.summary || operation.description || this.generateJobNameFromPath(path, method);
 
     // Extrair parâmetros
     const params = {};
@@ -188,6 +188,19 @@ class SwaggerGeneratorService {
       },
       payload: {}
     };
+  }
+
+  /**
+   * Gera nome do job baseado no path quando summary não está disponível
+   * @param {string} path - Path do endpoint
+   * @param {string} method - Método HTTP
+   * @returns {string} Nome do job
+   */
+  generateJobNameFromPath(path, method) {
+    // Extrair partes relevantes do path
+    const pathParts = path.split('/').filter(part => part && !part.startsWith('{'));
+    const resource = pathParts.length > 0 ? pathParts[pathParts.length - 1] : 'endpoint';
+    return `${method.toUpperCase()} ${resource}`;
   }
 
   /**

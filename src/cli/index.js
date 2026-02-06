@@ -40,7 +40,8 @@ Comandos:
   encrypt <texto>      Criptografa um texto para uso em arquivos de configuração
   decrypt <texto>      Descriptografa um texto criptografado
   generate-config      Gera configuração a partir de arquivo Swagger/OpenAPI
-  
+  list-jobs            Lista os nomes dos jobs de uma origem específica
+
 Argumentos disponíveis:
   -p, --production    Executa o job em modo produção
   -t, --test          Executa o job em modo teste
@@ -51,6 +52,7 @@ Argumentos disponíveis:
   -f, --file          Arquivo de configuração específico
   -s, --silent        Reduz as mensagens de saída na tela
   --payload-file      Arquivo JSON com payload dinâmico para a requisição
+  --list-jobs <origem> Lista os nomes dos jobs de uma origem específica
   -h, --help          Exibe esta mensagem de ajuda`);
 }
 
@@ -120,7 +122,7 @@ async function handleGenerateConfigCommand(args) {
           console.log('  -h, --help            Exibe esta ajuda');
           console.log('');
           console.log('Exemplo:');
-          console.log('  gicli generate-config --swagger docs/rhid/swagger.json --output rhid-generated.json');
+          console.log('  gicli generate-config --swagger docs/starsoft/swagger.json --output starsoft-generated.json');
           process.exit(0);
           break;
         default:
@@ -260,6 +262,8 @@ let silent = false;
 let configDir = null;
 let configFile = null;
 let payloadFile = null;
+let listJobs = false;
+let originName = null;
 
 for (let i = 0; i < args.length; i++) {
   const arg = args[i];
@@ -303,6 +307,10 @@ for (let i = 0; i < args.length; i++) {
       break;
     case '--payload-file':
       payloadFile = args[++i];
+      break;
+    case '--list-jobs':
+      listJobs = true;
+      originName = args[++i];
       break;
     default:
       console.error(`Argumento desconhecido: ${arg}`);
@@ -348,11 +356,34 @@ if (importConfigs) {
     console.error('Erro ao validar configurações:', error.message);
     process.exit(1);
   }
+} else if (listJobs) {
+  try {
+    await importService.loadConfigurations(false, configDir, configFile);
+    const jobNames = importService.listJobNamesByOrigin(originName);
+    if (jobNames.length === 0) {
+      console.log(`Nenhum job encontrado para a origem '${originName}'.`);
+    } else {
+      console.log(`Jobs da origem '${originName}':`);
+      jobNames.forEach(name => console.log(`  - ${name}`));
+    }
+    process.exit(0);
+  } catch (error) {
+    console.error('Erro ao listar jobs:', error.message);
+    process.exit(1);
+  }
 } else if (mode && jobName) {
   // Execute job com sistema de dependências
   try {
     // Carrega configurações
     await importService.loadConfigurations(false, configDir, configFile);
+
+    // Obtém todas as origens da configuração carregada
+    const allOrigins = [];
+    for (const [groupName, config] of importService.configs) {
+      if (config.origins) {
+        allOrigins.push(...config.origins);
+      }
+    }
 
     // Encontra o job na configuração
     const targetJob = importService.getJobById(jobName);
@@ -417,32 +448,51 @@ if (importConfigs) {
       let result = null;
       try {
         // Executa o job
-        result = await executionService.executeJob(originConfig, processedJobConfig, mode, silent);
+        result = await executionService.executeJob(originConfig, processedJobConfig, mode, silent, allOrigins);
 
         if (result.success) {
           // Armazena resultado na sessão para uso por jobs dependentes
           const sessionKey = `job_result_${jobId}`;
-          sessionService.set(sessionKey, {
-            data: result.response.data,
-            headers: result.response.headers,
-            status: result.response.status,
-            timestamp: result.response.timestamp
-          }, 3600000); // 1 hora de TTL
+          if (result.type === 'auth') {
+            // Para jobs de auth, armazena apenas o status de autenticação
+            sessionService.set(sessionKey, {
+              authenticated: result.authenticated,
+              timestamp: new Date().toISOString()
+            }, 3600000); // 1 hora de TTL
+          } else {
+            // Para jobs de request, armazena os dados da resposta
+            sessionService.set(sessionKey, {
+              data: result.response.data,
+              headers: result.response.headers,
+              status: result.response.status,
+              timestamp: result.response.timestamp
+            }, 3600000); // 1 hora de TTL
+          }
 
           // Também armazena em jobResults para template resolution
-          jobResults[jobId] = {
-            data: result.response.data,
-            headers: result.response.headers,
-            status: result.response.status,
-            timestamp: result.response.timestamp
-          };
+          if (result.type === 'auth') {
+            jobResults[jobId] = {
+              authenticated: result.authenticated,
+              timestamp: new Date().toISOString()
+            };
+          } else {
+            jobResults[jobId] = {
+              data: result.response.data,
+              headers: result.response.headers,
+              status: result.response.status,
+              timestamp: result.response.timestamp
+            };
+          }
 
           if (!silent) {
             console.log(`Job '${jobId}' executado com sucesso`);
           }
 
-          // Processa saída se configurado
-          const outputResult = await processJobOutput(processedJobConfig, result, originConfig, mode, silent);
+          // Processa saída se configurado (apenas para jobs de request)
+          let outputResult = null;
+          if (result.type !== 'auth') {
+            outputResult = await processJobOutput(processedJobConfig, result, originConfig, mode, silent);
+          }
 
           // Se for modo teste E não silencioso, mostra resultado
           if (mode === 'test' && !silent) {

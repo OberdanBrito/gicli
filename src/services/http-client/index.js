@@ -50,6 +50,10 @@ class HttpClientService {
           }
         }
 
+        console.log(`[HTTP-CLIENT] Fazendo ${method.toUpperCase()} para: ${url}`);
+        console.log(`[HTTP-CLIENT] Headers:`, JSON.stringify(headers, null, 2));
+        console.log(`[HTTP-CLIENT] Timeout: ${timeout}ms, Tentativa: ${attempt}/${retries + 1}`);
+
         const response = await fetch(url, fetchConfig);
         clearTimeout(timeoutId);
 
@@ -69,6 +73,9 @@ class HttpClientService {
 
       } catch (error) {
         lastError = error;
+
+        console.log(`[HTTP-CLIENT] Erro na tentativa ${attempt}:`, error.message);
+        console.log(`[HTTP-CLIENT] Tipo do erro:`, error.constructor.name);
 
         // Não tenta retry para erros de cliente (4xx) ou se é a última tentativa
         if (attempt > retries ||

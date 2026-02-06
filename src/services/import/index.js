@@ -366,6 +366,23 @@ class ImportService {
   }
 
   /**
+   * Lista os nomes dos jobs de uma origem específica
+   * @param {string} originName - Nome da origem
+   * @returns {string[]} Lista de nomes dos jobs ou array vazio se não encontrada
+   */
+  listJobNamesByOrigin(originName) {
+    for (const [groupName, config] of this.configs) {
+      if (config.origins) {
+        const origin = config.origins.find(o => o.name === originName);
+        if (origin && origin.job) {
+          return origin.job.map(job => job.name);
+        }
+      }
+    }
+    return [];
+  }
+
+  /**
    * Recarrega todas as configurações
    */
   async reloadConfigurations() {

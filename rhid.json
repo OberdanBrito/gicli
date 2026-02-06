@@ -535,6 +535,39 @@
             "clear_before_insert": false
           },
           "payload": {}
+        },
+        {
+          "id": "rhid_banco_horas",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_RHID_TOKEN",
+          "name": "banco_horas",
+          "method": "GET",
+          "path": "/customerdb/person.svc/person_banco_horas",
+          "params": {
+            "date": "20250801"
+          },
+          "headers": {
+            "Authorization": "Bearer $SESSION_RHID_TOKEN"
+          },
+          "auth": {},
+          "timeout": 10000,
+          "retry_policy": {},
+          "tags": [
+            "banco_horas",
+            "dados"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "RHiDBancoHoras",
+            "data_path": "data",
+            "clear_before_insert": true,
+            "columns": {}
+          },
+          "payload": {}
         }
       ]
     }

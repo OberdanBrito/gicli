@@ -1,0 +1,2264 @@
+{
+  "group": "ServiceLayerRFP",
+  "origins": [
+    {
+      "name": "starsoft_auth",
+      "base_url": "https://master.starsoft.com.br",
+      "connection_string": "ENC:0jOCzGvsYxjKY9yte6P1gPR7xaJDHIO4op9u6jy4oHZFNj84gZnwf4z0EJs1k1t9NeZTpld4wgYG/ktS8FNtGl8wLBvwqg2VK6zlTcNP666GXX/vXKSRbf61TbDOtwBSQCCYSyizUHiOyZuNB4NRbRV6dJ6JoGgMRDXcKRf4q2TpuBNZTd5EqqS0q6onF+a7iXDosQ==",
+      "job": [
+        {
+          "id": "login",
+          "type": "auth",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "token_identifier": "access_token",
+          "token_expiration_identifier": "expires_in",
+          "token_expiration_time": 3600,
+          "name": "login",
+          "method": "POST",
+          "path": "/auth/api/AuthManagement/Loginsimplified",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "auth": {},
+          "timeout": 5000,
+          "retry_policy": {},
+          "tags": [
+            "auth"
+          ],
+          "response_format": "json",
+          "payload": {
+            "userName": "dt10j",
+            "password": "5KVc*pDZ",
+            "accessCode": "SRM"
+          }
+        }
+      ]
+    },
+    {
+      "name": "starsoft_api",
+      "base_url": "https://heu3l1gql3hc-j912rtb9u1gx.s6t-zona-01-bff0131ddef.saas.wevy.cloud/ServiceLayerRH",
+      "connection_string": "ENC:0jOCzGvsYxjKY9yte6P1gPR7xaJDHIO4op9u6jy4oHZFNj84gZnwf4z0EJs1k1t9NeZTpld4wgYG/ktS8FNtGl8wLBvwqg2VK6zlTcNP666GXX/vXKSRbf61TbDOtwBSQCCYSyizUHiOyZuNB4NRbRV6dJ6JoGgMRDXcKRf4q2TpuBNZTd5EqqS0q6onF+a7iXDosQ==",
+      "job": [
+        {
+          "id": "post_api_v1_Apontamentos_excluir_resultado_ponto",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST excluir-resultado-ponto",
+          "method": "POST",
+          "path": "/api/v1/Apontamentos/excluir-resultado-ponto",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Apontamentos"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1ApontamentosExcluirResultadoPonto",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Apontamentos_enviar_resultado_ponto",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST enviar-resultado-ponto",
+          "method": "POST",
+          "path": "/api/v1/Apontamentos/enviar-resultado-ponto",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Apontamentos"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1ApontamentosEnviarResultadoPonto",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Apontamentos_excluir_apontamento_folha",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST excluir-apontamento-folha",
+          "method": "POST",
+          "path": "/api/v1/Apontamentos/excluir-apontamento-folha",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Apontamentos"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1ApontamentosExcluirApontamentoFolha",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Apontamentos_enviar_apontamento_folha",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST enviar-apontamento-folha",
+          "method": "POST",
+          "path": "/api/v1/Apontamentos/enviar-apontamento-folha",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Apontamentos"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1ApontamentosEnviarApontamentoFolha",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Apontamentos_enviar_rpa",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST enviar-rpa",
+          "method": "POST",
+          "path": "/api/v1/Apontamentos/enviar-rpa",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Apontamentos"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1ApontamentosEnviarRpa",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_BancodeHoras_consulta_saldo",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET consulta-saldo",
+          "method": "GET",
+          "path": "/api/v1/BancodeHoras/consulta-saldo",
+          "params": {
+            "codColaborador": "",
+            "anomes": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "BancodeHoras"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1BancodeHorasConsultaSaldo",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Cargo_listar_cargos",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-cargos",
+          "method": "GET",
+          "path": "/api/v1/Cargo/listar-cargos",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Cargo"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1CargoListarCargos",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Cargo_listar_nivel_cargos",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-nivel-cargos",
+          "method": "GET",
+          "path": "/api/v1/Cargo/listar-nivel-cargos",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Cargo"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1CargoListarNivelCargos",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Cnab",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET Cnab",
+          "method": "GET",
+          "path": "/api/v1/Cnab",
+          "params": {
+            "operacao": "",
+            "emissao": "",
+            "pagamento": "",
+            "efetivado": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Cnab"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1Cnab",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "put_api_v1_Cnab_efetivar",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "Efetivar CNAB",
+          "method": "PUT",
+          "path": "/api/v1/Cnab/efetivar",
+          "params": {
+            "id": "",
+            "operacao": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Cnab"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPutApiV1CnabEfetivar",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Colaborador_admitir",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST admitir",
+          "method": "POST",
+          "path": "/api/v1/Colaborador/admitir",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Colaborador"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1ColaboradorAdmitir",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Colaborador_atualizar",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST atualizar",
+          "method": "POST",
+          "path": "/api/v1/Colaborador/atualizar",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Colaborador"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1ColaboradorAtualizar",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Colaborador_transferir",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST transferir",
+          "method": "POST",
+          "path": "/api/v1/Colaborador/transferir",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Colaborador"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1ColaboradorTransferir",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Colaborador_afastar",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST afastar",
+          "method": "POST",
+          "path": "/api/v1/Colaborador/afastar",
+          "params": {
+            "Id": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Colaborador"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1ColaboradorAfastar",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Colaborador_rescindir",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST rescindir",
+          "method": "POST",
+          "path": "/api/v1/Colaborador/rescindir",
+          "params": {
+            "Id": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Colaborador"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1ColaboradorRescindir",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Colaborador_registrar_ponto",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST registrar-ponto",
+          "method": "POST",
+          "path": "/api/v1/Colaborador/registrar-ponto",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Colaborador"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1ColaboradorRegistrarPonto",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Colaborador_horas_trabalhadas",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET horas-trabalhadas",
+          "method": "GET",
+          "path": "/api/v1/Colaborador/horas-trabalhadas",
+          "params": {
+            "referencia": "",
+            "searchText": "",
+            "cpf": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Colaborador"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ColaboradorHorasTrabalhadas",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Colaborador_escala",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET escala",
+          "method": "GET",
+          "path": "/api/v1/Colaborador/escala",
+          "params": {
+            "inicio": "",
+            "fim": "",
+            "searchText": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Colaborador"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ColaboradorEscala",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Colaborador_Atestados",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET Atestados",
+          "method": "GET",
+          "path": "/api/v1/Colaborador/Atestados",
+          "params": {
+            "inicio": "",
+            "fim": "",
+            "searchText": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Colaborador"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ColaboradorAtestados",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Colaborador_listar_feriados",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-feriados",
+          "method": "GET",
+          "path": "/api/v1/Colaborador/listar-feriados",
+          "params": {
+            "searchText": "",
+            "inicio": "",
+            "fim": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Colaborador"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ColaboradorListarFeriados",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_ConsultasPaginadas_listar_hollerites_publicados",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-hollerites-publicados",
+          "method": "GET",
+          "path": "/api/v1/ConsultasPaginadas/listar-hollerites-publicados",
+          "params": {
+            "referencia": "",
+            "colaborador": "",
+            "anomes": "",
+            "tipoCalculo": "",
+            "page": "",
+            "pageSize": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "ConsultasPaginadas"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ConsultasPaginadasListarHolleritesPublicados",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_ConsultasPaginadas_listar_historico_salarial",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-historico-salarial",
+          "method": "GET",
+          "path": "/api/v1/ConsultasPaginadas/listar-historico-salarial",
+          "params": {
+            "referencia": "",
+            "searchText": "",
+            "page": "",
+            "pageSize": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "ConsultasPaginadas"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ConsultasPaginadasListarHistoricoSalarial",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_ConsultasPaginadas_listar_historico_unidade",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-historico-unidade",
+          "method": "GET",
+          "path": "/api/v1/ConsultasPaginadas/listar-historico-unidade",
+          "params": {
+            "referencia": "",
+            "searchText": "",
+            "page": "",
+            "pageSize": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "ConsultasPaginadas"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ConsultasPaginadasListarHistoricoUnidade",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_ConsultasPaginadas_listar_historico_sindicato",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-historico-sindicato",
+          "method": "GET",
+          "path": "/api/v1/ConsultasPaginadas/listar-historico-sindicato",
+          "params": {
+            "referencia": "",
+            "searchText": "",
+            "page": "",
+            "pageSize": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "ConsultasPaginadas"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ConsultasPaginadasListarHistoricoSindicato",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_ConsultasPaginadas_listar_historico_horario",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-historico-horario",
+          "method": "GET",
+          "path": "/api/v1/ConsultasPaginadas/listar-historico-horario",
+          "params": {
+            "referencia": "",
+            "searchText": "",
+            "page": "",
+            "pageSize": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "ConsultasPaginadas"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ConsultasPaginadasListarHistoricoHorario",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_ConsultasPaginadas_listar_historico_recisoes",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-historico-recisoes",
+          "method": "GET",
+          "path": "/api/v1/ConsultasPaginadas/listar-historico-recisoes",
+          "params": {
+            "referencia": "",
+            "searchText": "",
+            "page": "",
+            "pageSize": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "ConsultasPaginadas"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ConsultasPaginadasListarHistoricoRecisoes",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_ConsultasPaginadas_listar_historico_afastamentos",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-historico-afastamentos",
+          "method": "GET",
+          "path": "/api/v1/ConsultasPaginadas/listar-historico-afastamentos",
+          "params": {
+            "referencia": "",
+            "searchText": "",
+            "page": "",
+            "pageSize": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "ConsultasPaginadas"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ConsultasPaginadasListarHistoricoAfastamentos",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_ConsultasPaginadas_listar_historico_ferias",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-historico-ferias",
+          "method": "GET",
+          "path": "/api/v1/ConsultasPaginadas/listar-historico-ferias",
+          "params": {
+            "referencia": "",
+            "searchText": "",
+            "page": "",
+            "pageSize": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "ConsultasPaginadas"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ConsultasPaginadasListarHistoricoFerias",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_ConsultasPaginadas_folha_autonomo",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET folha-autonomo",
+          "method": "GET",
+          "path": "/api/v1/ConsultasPaginadas/folha-autonomo",
+          "params": {
+            "referencia": "",
+            "tipocalculo": "",
+            "searchText": "",
+            "page": "",
+            "pageSize": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "ConsultasPaginadas"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ConsultasPaginadasFolhaAutonomo",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_ConsultasPaginadas_folha_colaborador",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET folha-colaborador",
+          "method": "GET",
+          "path": "/api/v1/ConsultasPaginadas/folha-colaborador",
+          "params": {
+            "referencia": "",
+            "tipocalculo": "",
+            "searchText": "",
+            "page": "",
+            "pageSize": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "ConsultasPaginadas"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ConsultasPaginadasFolhaColaborador",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_ConsultasPaginadas_resumo_folha_unidade",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET resumo-folha-unidade",
+          "method": "GET",
+          "path": "/api/v1/ConsultasPaginadas/resumo-folha-unidade",
+          "params": {
+            "referencia": "",
+            "tipocalculo": "",
+            "searchText": "",
+            "page": "",
+            "pageSize": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "ConsultasPaginadas"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ConsultasPaginadasResumoFolhaUnidade",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_ConsultasPaginadas_listar_colaboradores",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-colaboradores",
+          "method": "GET",
+          "path": "/api/v1/ConsultasPaginadas/listar-colaboradores",
+          "params": {
+            "referencia": "",
+            "searchText": "",
+            "page": "",
+            "pageSize": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "ConsultasPaginadas"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ConsultasPaginadasListarColaboradores",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_ConsultasPaginadas_listar_colaboradores_2",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-colaboradores-2",
+          "method": "GET",
+          "path": "/api/v1/ConsultasPaginadas/listar-colaboradores-2",
+          "params": {
+            "referencia": "",
+            "codigo": "",
+            "nome": "",
+            "cpf": "",
+            "pis": "",
+            "status": "",
+            "page": "",
+            "pageSize": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "ConsultasPaginadas"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ConsultasPaginadasListarColaboradores2",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_ConsultasPaginadas_listar_acumuladores_ponto",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-acumuladores-ponto",
+          "method": "GET",
+          "path": "/api/v1/ConsultasPaginadas/listar-acumuladores-ponto",
+          "params": {
+            "referencia": "",
+            "searchText": "",
+            "page": "",
+            "pageSize": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "ConsultasPaginadas"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ConsultasPaginadasListarAcumuladoresPonto",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Contabilizacao_lancamento_contabil_folha",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET lancamento-contabil-folha",
+          "method": "GET",
+          "path": "/api/v1/Contabilizacao/lancamento-contabil-folha",
+          "params": {
+            "unidade": "",
+            "anomes": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Contabilizacao"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ContabilizacaoLancamentoContabilFolha",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Contabilizacao_lancamento_contabil_folha_dimensoes",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET lancamento-contabil-folha-dimensoes",
+          "method": "GET",
+          "path": "/api/v1/Contabilizacao/lancamento-contabil-folha-dimensoes",
+          "params": {
+            "unidade": "",
+            "anomes": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Contabilizacao"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ContabilizacaoLancamentoContabilFolhaDimensoes",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Contabilizacao_lancamento_contabil_pagamentos",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET lancamento-contabil-pagamentos",
+          "method": "GET",
+          "path": "/api/v1/Contabilizacao/lancamento-contabil-pagamentos",
+          "params": {
+            "unidade": "",
+            "anomes": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Contabilizacao"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ContabilizacaoLancamentoContabilPagamentos",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_CustomHooks_urbano",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET urbano",
+          "method": "GET",
+          "path": "/api/v1/CustomHooks/urbano",
+          "params": {
+            "referencia": "",
+            "tipoCalculo": "",
+            "searchText": "",
+            "page": "",
+            "pageSize": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "CustomHooks"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1CustomHooksUrbano",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_CustomHooks_listar_colaboradores_nai_it",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-colaboradores-nai-it",
+          "method": "GET",
+          "path": "/api/v1/CustomHooks/listar-colaboradores-nai-it",
+          "params": {
+            "referencia": "",
+            "searchText": "",
+            "page": "",
+            "pageSize": "",
+            "active": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "CustomHooks"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1CustomHooksListarColaboradoresNaiIt",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Departamento_listar_departamentos",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-departamentos",
+          "method": "GET",
+          "path": "/api/v1/Departamento/listar-departamentos",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Departamento"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1DepartamentoListarDepartamentos",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Evento_listar_eventos",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-eventos",
+          "method": "GET",
+          "path": "/api/v1/Evento/listar-eventos",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Evento"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1EventoListarEventos",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Faixa_listar_faixas",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-faixas",
+          "method": "GET",
+          "path": "/api/v1/Faixa/listar-faixas",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Faixa"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1FaixaListarFaixas",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Funcao_listar_funcoes",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-funcoes",
+          "method": "GET",
+          "path": "/api/v1/Funcao/listar-funcoes",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Funcao"
+          ],
+          "response_format": "json"
+        },
+        {
+          "id": "get_api_v1_Holerite_download",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET download",
+          "method": "GET",
+          "path": "/api/v1/Holerite/download",
+          "params": {
+            "Id": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Holerite"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1HoleriteDownload",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Horario_listar_horarios",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-horarios",
+          "method": "GET",
+          "path": "/api/v1/Horario/listar-horarios",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Horario"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1HorarioListarHorarios",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Horario_listar_escalas",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-escalas",
+          "method": "GET",
+          "path": "/api/v1/Horario/listar-escalas",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Horario"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1HorarioListarEscalas",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Projeto_listar_projetos",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-projetos",
+          "method": "GET",
+          "path": "/api/v1/Projeto/listar-projetos",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Projeto"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1ProjetoListarProjetos",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Projeto",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET Projeto",
+          "method": "GET",
+          "path": "/api/v1/Projeto",
+          "params": {
+            "Id": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Projeto"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1Projeto",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Projeto",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST Projeto",
+          "method": "POST",
+          "path": "/api/v1/Projeto",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Projeto"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1Projeto",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "delete_api_v1_Projeto",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "DELETE Projeto",
+          "method": "DELETE",
+          "path": "/api/v1/Projeto",
+          "params": {
+            "Id": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Projeto"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIDeleteApiV1Projeto",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Sindicato_listar_Sindicatos",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-Sindicatos",
+          "method": "GET",
+          "path": "/api/v1/Sindicato/listar-Sindicatos",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Sindicato"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1SindicatoListarSindicatos",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Step_listar_step",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-step",
+          "method": "GET",
+          "path": "/api/v1/Step/listar-step",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Step"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1StepListarStep",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_TimeSheet_lista",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET lista",
+          "method": "GET",
+          "path": "/api/v1/TimeSheet/lista",
+          "params": {
+            "inicio": "",
+            "fim": "",
+            "codColab": "",
+            "page": "",
+            "pageSize": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "TimeSheet"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1TimeSheetLista",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_UnidadeDeNegocios_listar_unidades",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET listar-unidades",
+          "method": "GET",
+          "path": "/api/v1/UnidadeDeNegocios/listar-unidades",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "UnidadeDeNegocios"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1UnidadeDeNegociosListarUnidades",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Webhooks_gupy_candidate_hired",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST candidate-hired",
+          "method": "POST",
+          "path": "/api/v1/Webhooks/gupy/candidate-hired",
+          "params": {
+            "token": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Webhooks"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1WebhooksGupyCandidateHired",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Webhooks_gupy_pre_employee",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST pre-employee",
+          "method": "POST",
+          "path": "/api/v1/Webhooks/gupy/pre-employee",
+          "params": {
+            "token": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Webhooks"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1WebhooksGupyPreEmployee",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Webhooks_hruniverse_pre_employee",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST pre-employee",
+          "method": "POST",
+          "path": "/api/v1/Webhooks/hruniverse/pre-employee",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Webhooks"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1WebhooksHruniversePreEmployee",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Webhooks_hruniverse_termination",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST termination",
+          "method": "POST",
+          "path": "/api/v1/Webhooks/hruniverse/termination",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Webhooks"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1WebhooksHruniverseTermination",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Webhooks_hruniverse_change_contract",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST change-contract",
+          "method": "POST",
+          "path": "/api/v1/Webhooks/hruniverse/change-contract",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Webhooks"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1WebhooksHruniverseChangeContract",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Webhooks_hruniverse_change_employee_information",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST change-employee-information",
+          "method": "POST",
+          "path": "/api/v1/Webhooks/hruniverse/change-employee-information",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Webhooks"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1WebhooksHruniverseChangeEmployeeInformation",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "get_api_v1_Webhooks_hruniverse_position",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "GET position",
+          "method": "GET",
+          "path": "/api/v1/Webhooks/hruniverse/position",
+          "params": {
+            "Code": "",
+            "Description": ""
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Webhooks"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIGetApiV1WebhooksHruniversePosition",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Webhooks_hruniverse_position",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST position",
+          "method": "POST",
+          "path": "/api/v1/Webhooks/hruniverse/position",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Webhooks"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1WebhooksHruniversePosition",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Webhooks_request_hruniverse_pre_employee",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST pre-employee",
+          "method": "POST",
+          "path": "/api/v1/Webhooks/request/hruniverse/pre-employee",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Webhooks"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1WebhooksRequestHruniversePreEmployee",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Webhooks_request_hruniverse_termination",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST termination",
+          "method": "POST",
+          "path": "/api/v1/Webhooks/request/hruniverse/termination",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Webhooks"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1WebhooksRequestHruniverseTermination",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Webhooks_request_hruniverse_change_contract",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST change-contract",
+          "method": "POST",
+          "path": "/api/v1/Webhooks/request/hruniverse/change-contract",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Webhooks"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1WebhooksRequestHruniverseChangeContract",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Webhooks_request_change_employee_information",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST change-employee-information",
+          "method": "POST",
+          "path": "/api/v1/Webhooks/request/change-employee-information",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Webhooks"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1WebhooksRequestChangeEmployeeInformation",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        },
+        {
+          "id": "post_api_v1_Webhooks_request_hruniverse_delta_tranmission_file",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "POST delta-tranmission-file",
+          "method": "POST",
+          "path": "/api/v1/Webhooks/request/hruniverse/delta-tranmission-file",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Webhooks"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "APIPostApiV1WebhooksRequestHruniverseDeltaTranmissionFile",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

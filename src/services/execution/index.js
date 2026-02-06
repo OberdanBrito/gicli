@@ -24,7 +24,7 @@ class ExecutionService {
    * @param {boolean} silent - Modo silencioso
    * @returns {Promise<object>} Resultado da execução
    */
-  async executeJob(originConfig, jobConfig, mode = 'production', silent = false) {
+  async executeJob(originConfig, jobConfig, mode = 'production', silent = false, allOrigins = null) {
     const jobId = `${originConfig.name}_${jobConfig.id}`;
 
     if (this.runningJobs.has(jobId)) {
@@ -56,7 +56,10 @@ class ExecutionService {
       if (jobConfig.type === 'request') {
         // Verifica se há auth necessário (presença de session_name)
         if (jobConfig.session_name) {
-          await authService.refreshAuthentication(originConfig, this.findAuthJob(originConfig), mode);
+          const authResult = this.findAuthJob(originConfig, jobConfig.session_name, allOrigins);
+          if (authResult) {
+            await authService.refreshAuthentication(authResult.origin, authResult.job, mode);
+          }
         }
 
         // Executa a requisição
@@ -111,6 +114,9 @@ class ExecutionService {
           // Determina o tipo de auth baseado na configuração
           const authType = jobConfig.auth?.type || 'Bearer';
           headers['Authorization'] = `${authType} ${token}`;
+          loggerService.info(`Token encontrado para ${originConfig.name}: ${token.substring(0, 50)}...`);
+        } else {
+          loggerService.warn(`Token não encontrado para ${originConfig.name}, session: ${jobConfig.session_name}`);
         }
       }
 
@@ -121,6 +127,8 @@ class ExecutionService {
 
       // Reconstrói URL com params processados
       const finalUrl = this.buildUrl(originConfig.base_url, jobConfig.path, processedParams);
+      loggerService.info(`URL final: ${finalUrl}`);
+      loggerService.info(`Headers:`, JSON.stringify(processedHeaders, null, 2));
 
       // Configurações de retry e timeout
       const retryPolicy = jobConfig.retry_policy || {};
@@ -155,7 +163,10 @@ class ExecutionService {
 
         try {
           // Renova autenticação
-          await authService.refreshAuthentication(originConfig, this.findAuthJob(originConfig), mode);
+          const authResult = this.findAuthJob(originConfig, jobConfig.session_name, allOrigins);
+          if (authResult) {
+            await authService.refreshAuthentication(authResult.origin, authResult.job, mode);
+          }
           loggerService.info(`Autenticação renovada para ${originConfig.name}, tentando requisição novamente...`);
 
           // Refaz a requisição com novo token
@@ -203,7 +214,10 @@ class ExecutionService {
 
         try {
           // Renova autenticação
-          await authService.refreshAuthentication(originConfig, this.findAuthJob(originConfig), mode);
+          const authResult = this.findAuthJob(originConfig, jobConfig.session_name, allOrigins);
+          if (authResult) {
+            await authService.refreshAuthentication(authResult.origin, authResult.job, mode);
+          }
           loggerService.info(`Autenticação renovada para ${originConfig.name}, tentando requisição novamente...`);
 
           // Refaz a requisição com novo token
@@ -315,12 +329,32 @@ class ExecutionService {
   }
 
   /**
-   * Encontra job de auth para uma origem
-   * @param {object} originConfig - Configuração da origem
+   * Encontra job de auth para uma origem baseado no session_name
+   * @param {object} originConfig - Configuração da origem atual
+   * @param {string} sessionName - Nome da sessão para procurar
+   * @param {Array} allOrigins - Todas as origens da configuração
    * @returns {object|null} Job de auth ou null
    */
-  findAuthJob(originConfig) {
-    return originConfig.job?.find(job => job.type === 'auth') || null;
+  findAuthJob(originConfig, sessionName = null, allOrigins = null) {
+    // Se não tem sessionName, usa o da origem atual
+    const targetSessionName = sessionName || originConfig.session_name;
+
+    // Primeiro tenta encontrar na origem atual
+    let authJob = originConfig.job?.find(job => job.type === 'auth' && (!targetSessionName || job.session_name === targetSessionName));
+
+    // Se não encontrou e tem todas as origens, procura em todas
+    if (!authJob && allOrigins) {
+      for (const origin of allOrigins) {
+        authJob = origin.job?.find(job => job.type === 'auth' && job.session_name === targetSessionName);
+        if (authJob) {
+          // Retorna um objeto com o job e a origem
+          return { job: authJob, origin: origin };
+        }
+      }
+    }
+
+    // Se encontrou na origem atual, retorna apenas o job
+    return authJob ? { job: authJob, origin: originConfig } : null;
   }
 
   /**
