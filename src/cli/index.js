@@ -343,7 +343,7 @@ if (importConfigs) {
     console.error('Erro ao validar configurações:', error.message);
     process.exit(1);
   }
-} else if (listJobs) {
+} else if (listType && listOrigin) {
   try {
     await importService.loadConfigurations(false, configDir, configFile);
     let jobList;
