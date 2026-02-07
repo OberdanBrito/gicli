@@ -247,6 +247,10 @@ class TransportService {
    * @returns {any} Valor extraído
    */
   extractValue(obj, path) {
+    if (!path || path.trim() === '') {
+      return obj;
+    }
+
     if (!path.includes('.')) {
       return obj && typeof obj === 'object' ? obj[path] : undefined;
     }
