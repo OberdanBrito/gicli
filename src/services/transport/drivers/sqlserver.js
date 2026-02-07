@@ -66,6 +66,7 @@ class SQLServerDriver {
             break;
           case 'user':
           case 'userid':
+          case 'user id':
             config.user = cleanValue;
             break;
           case 'password':
