@@ -1,6 +1,7 @@
 import { homedir } from 'os';
 import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto';
 import { config } from 'dotenv';
+import { join } from 'path';
 
 /**
  * Serviço de Ambiente
@@ -89,7 +90,8 @@ class EnvironmentService {
    */
   load(originName) {
     // Carrega explicitamente o .env para garantir variáveis disponíveis
-    const result = config({ path: '.env', override: true });
+    const envPath = join(homedir(), '.gicli', '.env');
+    const result = config({ path: envPath, override: true });
     if (result.error) {
       console.warn('Aviso: .env não encontrado ou inválido:', result.error.message);
     } else {
