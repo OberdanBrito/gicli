@@ -66,6 +66,39 @@
             "columns": {}
           },
           "payload": {}
+        },
+        {
+          "id": "get_api_v1_ConsultasPaginadas_listar_colaboradores",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "listar-colaboradores",
+          "method": "GET",
+          "path": "/api/v1/ConsultasPaginadas/listar-colaboradores",
+          "params": {
+            "page": 1,
+            "pageSize": 100
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "ConsultasPaginadas"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "ServiceLayerRFPColaboradores",
+            "data_path": "",
+            "columns": {}
+          },
+          "payload": {}
         }
       ]
     }

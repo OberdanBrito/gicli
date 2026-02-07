@@ -40,7 +40,7 @@ Comandos:
   encrypt <texto>      Criptografa um texto para uso em arquivos de configuração
   decrypt <texto>      Descriptografa um texto criptografado
   generate-config      Gera configuração a partir de arquivo Swagger/OpenAPI
-  list-jobs            Lista os nomes dos jobs de uma origem específica
+  list                 Lista os jobs de uma origem específica
 
 Argumentos disponíveis:
   -p, --production     Executa o job em modo produção
@@ -52,7 +52,7 @@ Argumentos disponíveis:
   -f, --file           Arquivo de configuração específico
   -s, --silent         Reduz as mensagens de saída na tela
   --payload-file       Arquivo JSON com payload dinâmico para a requisição
-  --list-jobs <origem> Lista os nomes dos jobs de uma origem específica
+  --list <tipo> <origem> Lista os jobs de uma origem específica (tipo: names ou ids)
   -h, --help           Exibe esta mensagem de ajuda`);
 }
 
@@ -262,8 +262,8 @@ let silent = false;
 let configDir = null;
 let configFile = null;
 let payloadFile = null;
-let listJobs = false;
-let originName = null;
+let listType = null;
+let listOrigin = null;
 
 for (let i = 0; i < args.length; i++) {
   const arg = args[i];
@@ -303,19 +303,6 @@ for (let i = 0; i < args.length; i++) {
       break;
     case '-s':
     case '--silent':
-      silent = true;
-      break;
-    case '--payload-file':
-      payloadFile = args[++i];
-      break;
-    case '--list-jobs':
-      listJobs = true;
-      originName = args[++i];
-      break;
-    default:
-      console.error(`Argumento desconhecido: ${arg}`);
-      showHelp();
-      process.exit(1);
   }
 }
 
@@ -359,12 +346,20 @@ if (importConfigs) {
 } else if (listJobs) {
   try {
     await importService.loadConfigurations(false, configDir, configFile);
-    const jobNames = importService.listJobNamesByOrigin(originName);
-    if (jobNames.length === 0) {
-      console.log(`Nenhum job encontrado para a origem '${originName}'.`);
+    let jobList;
+    if (listType === 'names') {
+      jobList = importService.listJobNamesByOrigin(listOrigin);
+    } else if (listType === 'ids') {
+      jobList = importService.listJobIdsByOrigin(listOrigin);
     } else {
-      console.log(`Jobs da origem '${originName}':`);
-      jobNames.forEach(name => console.log(`  - ${name}`));
+      console.error(`Tipo inválido: ${listType}. Use 'names' ou 'ids'.`);
+      process.exit(1);
+    }
+    if (jobList.length === 0) {
+      console.log(`Nenhum job encontrado para a origem '${listOrigin}'.`);
+    } else {
+      console.log(`Jobs da origem '${listOrigin}':`);
+      jobList.forEach(job => console.log(`  - ${job}`));
     }
     process.exit(0);
   } catch (error) {
