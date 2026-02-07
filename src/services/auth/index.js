@@ -27,7 +27,8 @@ class AuthService {
       environmentService.load(originConfig.name);
 
       // Constrói a URL completa
-      const url = this.buildUrl(originConfig.base_url, jobConfig.path, jobConfig.params);
+      const baseUrl = jobConfig.base_url || originConfig.base_url;
+      const url = this.buildUrl(baseUrl, jobConfig.path, jobConfig.params);
 
       // Prepara headers
       const headers = { ...jobConfig.headers };

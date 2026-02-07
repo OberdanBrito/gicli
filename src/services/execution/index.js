@@ -99,10 +99,13 @@ class ExecutionService {
   async executeRequest(originConfig, jobConfig, mode = 'production') {
     let authRetryAttempted = false;
 
+    // Base URL para o job
+    const baseUrl = jobConfig.base_url || originConfig.base_url;
+
     // Função auxiliar para fazer a requisição
     const makeRequest = async () => {
       // Constrói a URL
-      const url = this.buildUrl(originConfig.base_url, jobConfig.path, jobConfig.params);
+      const url = this.buildUrl(baseUrl, jobConfig.path, jobConfig.params);
 
       // Prepara headers
       const headers = { ...jobConfig.headers };
@@ -126,7 +129,7 @@ class ExecutionService {
       const processedParams = this.substituteVariables(jobConfig.params, originConfig.name);
 
       // Reconstrói URL com params processados
-      const finalUrl = this.buildUrl(originConfig.base_url, jobConfig.path, processedParams);
+      const finalUrl = this.buildUrl(baseUrl, jobConfig.path, processedParams);
       loggerService.info(`URL final: ${finalUrl}`);
       loggerService.info(`Headers:`, JSON.stringify(processedHeaders, null, 2));
 

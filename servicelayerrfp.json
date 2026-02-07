@@ -1,0 +1,73 @@
+{
+  "group": "ServiceLayerRFP",
+  "origins": [
+    {
+      "name": "starsoft_auth",
+      "base_url": "https://heu3l1gql3hc-j912rtb9u1gx.s6t-zona-01-3bff0131ddef.saas.wevy.cloud/ServiceLayerRH",
+      "connection_string": "ENC:C62jvAdbEqjM/sItxAkASen0fw5qACz40OUPStdJUVGUqDV9lGAVAr5lnHFgLMY5LhN7/Y2OUdsUtISg+L5JLMG49SHVu00rbj/T37NExbw2CYJMv4gryeX7MZNOVHWrNhmEwZyfYDu13AiLPH39vbDsnQobxXTkuCMF+QzRz7XDhBX6lbBJtHTQEjG7E8kEBYgaDORiU9qB1HxeFBogMTphK0FNsHk+DYN0RnxqSuudsP8hzzQf5A==",
+      "job": [
+        {
+          "id": "login",
+          "type": "auth",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "token_identifier": "access_token",
+          "token_expiration_identifier": "expires_in",          
+          "token_expiration_time": 3600,
+          "base_url": "https://master.starsoft.com.br",
+          "name": "login",
+          "method": "POST",
+          "path": "/auth/api/AuthManagement/Loginsimplified",
+          "params": {},
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "auth": {},
+          "timeout": 5000,
+          "retry_policy": {},
+          "tags": [
+            "auth"
+          ],
+          "response_format": "json",
+          "payload": {
+            "userName": "dt10j",
+            "password": "5KVc*pDZ",
+            "accessCode": "SRM"
+          }
+        },
+        {
+          "id": "get_api_v1_Cargo_listar_cargos",
+          "type": "request",
+          "mode": "production",
+          "session_name": "SESSION_SERVICELAYERRFP_TOKEN",
+          "name": "listar-cargos",
+          "method": "GET",
+          "path": "/api/v1/Cargo/listar-cargos",
+          "params": {
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
+          },
+          "headers": {
+            "Accept": "text/plain",
+            "Authorization": "Bearer $SESSION_SERVICELAYERRFP_TOKEN"
+          },
+          "auth": {},
+          "timeout": 30000,
+          "retry_policy": {},
+          "tags": [
+            "Cargo"
+          ],
+          "response_format": "json",
+          "output": {
+            "enabled": true,
+            "type": "database",
+            "driver": "sqlserver",
+            "table": "ServiceLayerRFPCargos",
+            "data_path": "data",
+            "columns": {}
+          },
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

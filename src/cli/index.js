@@ -43,17 +43,17 @@ Comandos:
   list-jobs            Lista os nomes dos jobs de uma origem específica
 
 Argumentos disponíveis:
-  -p, --production    Executa o job em modo produção
-  -t, --test          Executa o job em modo teste
-  -j, --job           Nome do job a ser executado
-  -i, --import        Importa e valida configurações
-  -v, --validate      Valida configurações sem executar jobs
-  -d, --dir           Diretório de configurações (padrão: docs/)
-  -f, --file          Arquivo de configuração específico
-  -s, --silent        Reduz as mensagens de saída na tela
-  --payload-file      Arquivo JSON com payload dinâmico para a requisição
+  -p, --production     Executa o job em modo produção
+  -t, --test           Executa o job em modo teste
+  -j, --job            Nome do job a ser executado
+  -i, --import         Importa e valida configurações
+  -v, --validate       Valida configurações sem executar jobs
+  -d, --dir            Diretório de configurações (padrão: docs/)
+  -f, --file           Arquivo de configuração específico
+  -s, --silent         Reduz as mensagens de saída na tela
+  --payload-file       Arquivo JSON com payload dinâmico para a requisição
   --list-jobs <origem> Lista os nomes dos jobs de uma origem específica
-  -h, --help          Exibe esta mensagem de ajuda`);
+  -h, --help           Exibe esta mensagem de ajuda`);
 }
 
 /**
