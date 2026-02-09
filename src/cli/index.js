@@ -27,33 +27,47 @@ if (args[0] === 'generate-config') {
   process.exit(0);
 }
 
+// Verificar comando list
+if (args[0] === 'list') {
+  const tipo = args[1];
+  const origem = args[2];
+  if (!tipo || !origem) {
+    console.error('Uso: gicli list <tipo> <origem>');
+    console.log('Tipos disponíveis: names, ids');
+    process.exit(1);
+  }
+  try {
+    await importService.loadConfigurations(false, null, null);
+    let jobList;
+    if (tipo === 'names') {
+      jobList = importService.listJobNamesByOrigin(origem);
+    } else if (tipo === 'ids') {
+      jobList = importService.listJobIdsByOrigin(origem);
+    } else {
+      console.error(`Tipo inválido: ${tipo}. Use 'names' ou 'ids'.`);
+      process.exit(1);
+    }
+    if (jobList.length === 0) {
+      console.log(`Nenhum job encontrado para a origem '${origem}'.`);
+    } else {
+      console.log(`Jobs da origem '${origem}':`);
+      jobList.forEach(job => console.log(`  - ${job}`));
+    }
+    process.exit(0);
+  } catch (error) {
+    console.error('Erro ao listar jobs:', error.message);
+    process.exit(1);
+  }
+}
+
 // Ler informações do package.json do próprio módulo
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const packageInfo = JSON.parse(readFileSync(join(__dirname, '../../package.json'), 'utf-8'));
 
-function showHelp() {
-  console.log(`Uso: gicli [OPÇÃO]...
-gicli v${packageInfo.version} - Gestor de integrações.
-
-Comandos:
-  encrypt <texto>      Criptografa um texto para uso em arquivos de configuração
-  decrypt <texto>      Descriptografa um texto criptografado
-  generate-config      Gera configuração a partir de arquivo Swagger/OpenAPI
-  list                 Lista os jobs de uma origem específica
-
-Argumentos disponíveis:
-  -p, --production     Executa o job em modo produção
-  -t, --test           Executa o job em modo teste
-  -j, --job            Nome do job a ser executado
-  -i, --import         Importa e valida configurações
-  -v, --validate       Valida configurações sem executar jobs
-  -d, --dir            Diretório de configurações (padrão: docs/)
-  -f, --file           Arquivo de configuração específico
-  -s, --silent         Reduz as mensagens de saída na tela
-  --payload-file       Arquivo JSON com payload dinâmico para a requisição
-  --list <tipo> <origem> Lista os jobs de uma origem específica (tipo: names ou ids)
-  -h, --help           Exibe esta mensagem de ajuda`);
+async function showHelp() {
+  const { getHelpText } = await import('./help-template.js');
+  console.log(getHelpText(packageInfo));
 }
 
 /**
@@ -253,6 +267,7 @@ async function processJobOutput(jobConfig, jobResult, originConfig, mode, silent
 }
 
 // Parse arguments
+(async () => {
 let mode = null;
 let jobName = null;
 let importConfigs = false;
@@ -290,7 +305,7 @@ for (let i = 0; i < args.length; i++) {
       break;
     case '-h':
     case '--help':
-      showHelp();
+      await showHelp();
       process.exit(0);
       break;
     case '-i':
@@ -303,11 +318,18 @@ for (let i = 0; i < args.length; i++) {
       break;
     case '-s':
     case '--silent':
+    case '--list':
+      listType = args[++i];
+      listOrigin = args[++i];
+      break;
+    case '--payload-file':
+      payloadFile = args[++i];
+      break;
   }
 }
 
 if (args.length === 0) {
-  showHelp();
+  await showHelp();
   process.exit(0);
 }
 
@@ -519,6 +541,7 @@ if (importConfigs) {
   }
 } else {
   console.error('Argumentos inválidos.');
-  showHelp();
+  await showHelp();
   process.exit(1);
 }
+})();

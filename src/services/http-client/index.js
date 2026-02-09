@@ -51,7 +51,14 @@ class HttpClientService {
         }
 
         console.log(`[HTTP-CLIENT] Fazendo ${method.toUpperCase()} para: ${url}`);
-        console.log(`[HTTP-CLIENT] Headers:`, JSON.stringify(headers, null, 2));
+        
+        // Mascarar token de autorização nos headers para log
+        let logHeaders = { ...headers };
+        if (logHeaders['Authorization'] && logHeaders['Authorization'].startsWith('Bearer ')) {
+          logHeaders['Authorization'] = 'Bearer ***';
+        }
+        
+        console.log(`[HTTP-CLIENT] Headers:`, JSON.stringify(logHeaders, null, 2));
         console.log(`[HTTP-CLIENT] Timeout: ${timeout}ms, Tentativa: ${attempt}/${retries + 1}`);
 
         const response = await fetch(url, fetchConfig);

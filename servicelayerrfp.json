@@ -2,7 +2,7 @@
   "group": "ServiceLayerRFP",
   "origins": [
     {
-      "name": "starsoft_auth",
+      "name": "servicelayer",
       "base_url": "https://heu3l1gql3hc-j912rtb9u1gx.s6t-zona-01-3bff0131ddef.saas.wevy.cloud/ServiceLayerRH",
       "connection_string": "Server=192.168.10.3,10252;Database=GSINTEGRACOES;User Id=oberdan.brito;Password=qe446pnh@;TrustServerCertificate=true;Application Name=oberdan;",
       "job": [
@@ -77,7 +77,9 @@
           "path": "/api/v1/ConsultasPaginadas/listar-colaboradores",
           "params": {
             "page": 1,
-            "pageSize": 100
+            "pageSize": 2000,
+            "referencia": "$DATE",
+            "tenId": "986648654D50398B2942C892BBBD94EF59DAFD853C37A70F393D63D511A284E3"
           },
           "headers": {
             "Accept": "text/plain",

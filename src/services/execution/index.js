@@ -278,7 +278,7 @@ class ExecutionService {
   }
 
   /**
-   * Substitui variáveis $ENV_* e $SESSION_*
+   * Substitui variáveis $ENV_*, $SESSION_* e $DATE
    * @param {any} data - Dados a processar
    * @param {string} originName - Nome da origem
    * @returns {any} Dados processados
@@ -292,6 +292,12 @@ class ExecutionService {
       data = data.replace(/\$SESSION_([A-Z_][A-Z0-9_]*)/g, (match, sessionKey) => {
         const value = sessionService.get(sessionKey);
         return value || match;
+      });
+
+      // Substitui $DATE pela data corrente no formato YYYY-MM-DD
+      data = data.replace(/\$DATE/g, () => {
+        const now = new Date();
+        return now.toISOString().split('T')[0];
       });
 
       return data;
