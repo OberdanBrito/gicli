@@ -278,6 +278,7 @@ let configDir = null;
 let configFile = null;
 let payloadFile = null;
 let paramsFile = null;
+let outputResponseParams = false;
 let listType = null;
 let listOrigin = null;
 
@@ -328,6 +329,9 @@ for (let i = 0; i < args.length; i++) {
       break;
     case '--params-file':
       paramsFile = args[++i];
+      break;
+    case '--output-response-params':
+      outputResponseParams = true;
       break;
   }
 }
@@ -534,6 +538,54 @@ if (importConfigs) {
               resultToShow.output = outputResult;
             }
             console.log(`Resultado de ${jobId}:`, JSON.stringify(resultToShow, null, 2));
+          }
+
+          // Se --output-response-params foi especificado, salva resposta da API
+          if (outputResponseParams && result.type !== 'auth') {
+            try {
+              // Extrair metadados da resposta da API antes de salvar
+              let responseToSave = { ...result.response };
+              
+              // Se o campo data contém dados da API (objeto), extrair metadados
+              if (responseToSave.data && typeof responseToSave.data === 'object') {
+                try {
+                  const apiData = responseToSave.data;
+                  
+                  // Adicionar metadados da API no nível superior
+                  responseToSave = {
+                    ...responseToSave,
+                    currentPage: apiData.currentPage,
+                    totalPages: apiData.totalPages,
+                    pageSize: apiData.pageSize,
+                    totalCount: apiData.totalCount,
+                    hasPrevious: apiData.hasPrevious,
+                    hasNext: apiData.hasNext,
+                    succeeded: apiData.succeeded,
+                    errors: apiData.errors,
+                    message: apiData.message
+                  };
+                } catch (parseError) {
+                  // Se não conseguir extrair, manter estrutura original
+                  console.warn(`Aviso: Não foi possível extrair metadados da resposta da API: ${parseError.message}`);
+                }
+              }
+              
+              // Agora remover o campo "data" que contém os registros
+              if (responseToSave.data) {
+                responseToSave.data = "[REMOVIDO - CAMPO DE DADOS]";
+              }
+              
+              // Salva sempre no arquivo "output-response-params.js"
+              const outputFilePath = './output-response-params.js';
+              const fs = await import('fs');
+              fs.writeFileSync(outputFilePath, JSON.stringify(responseToSave, null, 2), 'utf8');
+              
+              if (!silent) {
+                console.log(`Resposta da API salva em: ${outputFilePath}`);
+              }
+            } catch (saveError) {
+              console.warn(`Aviso: Não foi possível salvar resposta da API: ${saveError.message}`);
+            }
           }
 
         } else {
