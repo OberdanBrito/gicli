@@ -277,6 +277,7 @@ let silent = false;
 let configDir = null;
 let configFile = null;
 let payloadFile = null;
+let paramsFile = null;
 let listType = null;
 let listOrigin = null;
 
@@ -324,6 +325,9 @@ for (let i = 0; i < args.length; i++) {
       break;
     case '--payload-file':
       payloadFile = args[++i];
+      break;
+    case '--params-file':
+      paramsFile = args[++i];
       break;
   }
 }
@@ -459,7 +463,19 @@ if (importConfigs) {
         }
       }
 
-      // Inicia contexto de logging para este job
+      // Se params file foi especificado, ler e injetar nos params
+      if (paramsFile) {
+        try {
+          const paramsContent = readFileSync(paramsFile, 'utf-8');
+          processedJobConfig.params = JSON.parse(paramsContent);
+          if (!silent) {
+            console.log(`Parâmetros dinâmicos carregados de: ${paramsFile}`);
+          }
+        } catch (error) {
+          throw new Error(`Erro ao ler params file '${paramsFile}': ${error.message}`);
+        }
+      }
+
       loggerService.jobStart(jobId, { origin: originConfig.name, mode });
 
       let result = null;

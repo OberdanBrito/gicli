@@ -23,6 +23,7 @@ Argumentos disponíveis:
   -f, --file           Arquivo de configuração específico
   -s, --silent         Reduz as mensagens de saída na tela
   --payload-file       Arquivo JSON com payload dinâmico para a requisição
+  --params-file        Arquivo JSON com parâmetros dinâmicos para a requisição
   -h, --help           Exibe esta mensagem de ajuda
 
 Variáveis de Substituição:
