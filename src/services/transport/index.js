@@ -1,4 +1,3 @@
-// import { SQLiteDriver } from './drivers/sqlite.js'; // Temporariamente removido para compatibilidade com Node.js
 import { SQLServerDriver } from './drivers/sqlserver.js';
 import loggerService from '../logger/index.js';
 
@@ -131,11 +130,6 @@ class TransportService {
 
           // Garante que a tabela existe (apenas na primeira iteração)
           if (i === 0) {
-            // Se clear_before_insert, força recriação da tabela para schema correto
-            if (clear_before_insert) {
-              console.log(`Forçando recriação da tabela [${table}] para schema correto`);
-              await this.activeDriver.query(`DROP TABLE IF EXISTS [${table}]`);
-            }
             
             await this.ensureTable(table, dataToInsert, hasIdColumn);
             
