@@ -1,5 +1,6 @@
 #!/usr/bin/node
 
+import sql from 'mssql';
 import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
@@ -11,7 +12,21 @@ const __dirname = path.dirname(__filename);
 const gicliPath = 'node ./src/cli/index.js';
 const outputFilePath = './output-response-params.js';
 
+const config = {
+  server: '192.168.10.3',
+  port: 10252,
+  user: 'oberdan.brito',
+  password: 'qe446pnh@',
+  database: 'GSINTEGRACOES',
+  options: { trustServerCertificate: true, encrypt: false }
+};
+
+
 async function run() {
+
+    const pool = await sql.connect(config);
+    await pool.request().query('TRUNCATE TABLE GSINTEGRACOES.dbo.ServiceLayerRFPColaboradores;');
+
   let currentPage = 1;
   let totalProcessed = 0;
 
