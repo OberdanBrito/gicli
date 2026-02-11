@@ -1,5 +1,6 @@
 // import { SQLiteDriver } from './drivers/sqlite.js'; // Temporariamente removido para compatibilidade com Node.js
 import { SQLServerDriver } from './drivers/sqlserver.js';
+import loggerService from '../logger/index.js';
 
 /**
  * Serviço de Transporte para Banco de Dados
@@ -56,7 +57,7 @@ class TransportService {
    * @param {object} originConfig - Configuração da origem (para herdar connection_string)
    */
   async processDatabaseOutput(responseData, outputConfig, metadata = {}, originConfig = {}) {
-    console.log('=== PROCESS DATABASE OUTPUT STARTED ===');
+    console.log('Processando dados para banco de dados...');
     
     if (!this.connected || !this.activeDriver) {
       throw new Error('Transporte não conectado ao banco de dados');
@@ -89,7 +90,7 @@ class TransportService {
           dataToProcess = Object.values(dataToProcess);
         }
       }
-      console.log(`DEBUG PROCESS - Tipo de dados: ${Array.isArray(dataToProcess) ? `Array[${dataToProcess.length}]` : typeof dataToProcess}`);
+      loggerService.debug(`Tipo de dados: ${Array.isArray(dataToProcess) ? `Array[${dataToProcess.length}]` : typeof dataToProcess}`);
 
       let recordsInserted = 0;
       let hasIdColumn = false;
@@ -101,7 +102,7 @@ class TransportService {
         hasIdColumn = this.hasIdColumn(dataToProcess);
       }
 
-      console.log(`Dados ${hasIdColumn ? 'TÊM' : 'NÃO TÊM'} coluna ID própria`);
+      console.log(`Existe Id no response? ${hasIdColumn ? 'Sim' : 'Não'}`);
 
       // Verifica se os dados extraídos são um array
       if (Array.isArray(dataToProcess)) {
@@ -305,7 +306,7 @@ class TransportService {
 
       if (existingColumns.length > 0) {
         // Tabela existe - assume que está configurada corretamente
-        console.log(`Tabela ${tableName} já existe (${existingColumns.length} colunas)`);
+        loggerService.debug(`Tabela ${tableName} já existe (${existingColumns.length} colunas)`);
         return;
       }
 
@@ -365,9 +366,9 @@ class TransportService {
    */
   inferColumnsFromData(sampleData) {
     // Debug: Verificar sampleData real
-    console.log('DEBUG INFER - sampleData keys:', Object.keys(sampleData));
-    console.log('DEBUG INFER - has created_at:', sampleData.hasOwnProperty('created_at'));
-    console.log('DEBUG INFER - created_at value:', sampleData.created_at);
+    loggerService.debug('sampleData keys:', Object.keys(sampleData));
+    loggerService.debug('has created_at:', sampleData.hasOwnProperty('created_at'));
+    loggerService.debug('created_at value:', sampleData.created_at);
     
     const columns = {};
 
@@ -385,7 +386,7 @@ class TransportService {
     }
 
     // Debug: Mostrar columns final
-    console.log('DEBUG INFER - final columns:', JSON.stringify(columns, null, 2));
+    loggerService.debug('final columns:', JSON.stringify(columns, null, 2));
 
     return columns;
   }

@@ -91,7 +91,7 @@ async function run() {
     await new Promise(resolve => setTimeout(resolve, 500));
   }
 
-  console.log('\nProcessamento concluído com sucesso!');
+  console.log('\nProcessamento concluído com sucesso');
   console.log(`Total de páginas processadas: ${totalProcessed + 1}`);
   console.log(`Última página processada: ${currentPage}`);
 }

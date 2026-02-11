@@ -16,9 +16,7 @@ class SQLServerDriver {
   async connect(connectionString) {
     try {
       const config = this.parseConnectionString(connectionString);
-
-      this.pool = await sql.connect(config);
-      console.log(`Conectado ao SQL Server: ${config.server}/${config.database}`);
+      this.pool = await sql.connect(config);      
       return true;
     } catch (error) {
       console.error('Erro ao conectar ao SQL Server:', error.message);
@@ -33,7 +31,7 @@ class SQLServerDriver {
     if (this.pool) {
       await this.pool.close();
       this.pool = null;
-      console.log('Desconectado do SQL Server');
+      console.log('Desconectado da base de dados');
     }
   }
 

@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "node src/cli/index.js",
-    "test": "node src/cli/index.js --help && echo '✅ CLI syntax validation passed'",
+    "test": "node src/cli/index.js --help && echo 'CLI syntax validation passed'",
     "start": "node src/cli/index.js"
   },
   "keywords": [
