@@ -91,7 +91,7 @@ class EnvironmentService {
   load(originName) {
     // Carrega explicitamente o .env para garantir variáveis disponíveis
     const envPath = join(homedir(), '.gicli', '.env');
-    const result = config({ path: envPath, override: true });
+    const result = config({ path: envPath, override: true, silent: true });
     if (result.error) {
       console.warn('Aviso: .env não encontrado ou inválido:', result.error.message);
     } else {

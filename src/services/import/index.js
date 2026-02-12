@@ -41,7 +41,7 @@ class ImportService {
     const envPath = join(homedir(), '.gicli', '.env');
     
     if (existsSync(envPath)) {
-      dotenv.config({ path: envPath });
+      dotenv.config({ path: envPath, silent: true });
       console.log('Variáveis de ambiente carregadas do .env');
     }
   }
