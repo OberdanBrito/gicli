@@ -91,16 +91,10 @@ class EnvironmentService {
   load(originName) {
     // Carrega explicitamente o .env para garantir variáveis disponíveis
     const envPath = join(homedir(), '.gicli', '.env');
-    const result = config({ path: envPath, override: true, silent: true });
+    const result = config({ path: envPath, override: true, quiet: true });
     if (result.error) {
       console.warn('Aviso: .env não encontrado ou inválido:', result.error.message);
-    } else {
-      console.log(`Arquivo .env carregado explicitamente. Variáveis: ${Object.keys(result.parsed).length}`);
     }
-    
-    // Como usamos dotenv no import service, as variáveis já estão em process.env
-    // Não precisamos mais carregar arquivos .env específicos por origem
-    console.log(`Usando variáveis de ambiente do sistema para ${originName}`);
     
     // Mantém compatibilidade com código que espera cache por origem
     if (!this.envCache.has(originName)) {

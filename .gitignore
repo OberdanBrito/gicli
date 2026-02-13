@@ -153,3 +153,4 @@ logs_*/
 src/config/*.json
 docs/rhid/rhid.json
 .npmrc
+srm.gicli.customs.code-workspace

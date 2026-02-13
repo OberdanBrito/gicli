@@ -13,6 +13,10 @@ import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
+// Set dotenvx quiet mode to suppress messages
+process.env.DOTENVX_QUIET = '1';
+process.env.DOTENV_SUPPRESS_DEBUG_MESSAGES = 'true';
+
 const args = process.argv.slice(2);
 
 // Verificar comandos de criptografia antes do parsing normal
@@ -447,9 +451,6 @@ if (importConfigs) {
     for (const jobId of executionOrder) {
       const jobConfig = allJobs.find(job => job.id === jobId);
 
-      if (!silent) {
-        console.log(`Executando job: ${jobId}`);
-      }
 
       // Aplica template variables e substituições de ambiente
       let processedJobConfig = environmentService.substituteDeep(jobConfig, originConfig.name, jobResults);

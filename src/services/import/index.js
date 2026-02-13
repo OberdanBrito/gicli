@@ -41,8 +41,7 @@ class ImportService {
     const envPath = join(homedir(), '.gicli', '.env');
     
     if (existsSync(envPath)) {
-      dotenv.config({ path: envPath, silent: true });
-      console.log('Variáveis de ambiente carregadas do .env');
+      dotenv.config({ path: envPath, quiet: true });      
     }
   }
 
@@ -77,8 +76,7 @@ class ImportService {
       const entries = readdirSync(targetPath, { withFileTypes: true });
       const configDirs = entries.filter(entry => entry.isDirectory());
 
-      if (configDirs.length === 0) {
-        console.log(`Nenhum diretório de configuração encontrado em ${targetPath}. Tentando carregar configurações validadas de ${this.validatedPath}...`);
+      if (configDirs.length === 0) {        
         return await this.loadConfigurationsFromValidatedPath(validateOnly);
       }
 
