@@ -505,11 +505,10 @@ if (importConfigs) {
 
       // Verificar se é processamento em lote
       const batchConfig = processedJobConfig.batch_processing;
-      const isBatchProcessing = batchConfig && typeof batchConfig === 'object' && Array.isArray(processedJobConfig.payload);
+      const isBatchProcessing = batchConfig && (batchConfig === true || (typeof batchConfig === 'object' && Array.isArray(processedJobConfig.payload)));
+      const groupPayload = batchConfig && typeof batchConfig === 'object' && batchConfig.group_payload === true;
 
       if (isBatchProcessing) {
-        const groupPayload = batchConfig.group_payload === true;
-
         if (groupPayload) {
           // Envia o array inteiro como payload em uma única requisição
           if (!silent) {
