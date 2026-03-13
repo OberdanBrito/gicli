@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "node src/cli/index.js",
     "test": "node src/cli/index.js --help && echo 'CLI syntax validation passed'",
-    "start": "node src/cli/index.js"
+    "start": "node src/cli/index.js",
+    "admissao": "node src/cli/index.js -f .\\servicelayerrfp.json -p -j post_api_v1_Colaborador_pre_admitir --params-file .\\payload.json"
   },
   "keywords": [
     "cli",

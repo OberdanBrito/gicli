@@ -1,0 +1,58 @@
+[
+  {
+    "admissao": "12/02/2026",
+    "codigo": 174852,
+    "registro": 321772,
+    "cpf": "237.091.948-57",
+    "dataNascimento": "15/11/1993",
+    "estadoCivil": "1",
+    "nome": "ANNA PAULLA RODRIGUES DE OLIVEIRA SENA ",
+    "regime": 1,
+    "sexo": 1,
+    "codVinculo": "0010",
+    "salario": "7,73",
+    "ddd": "11",
+    "telefone": "-982856009",
+    "endereco": {
+      "logradouro": "Rua Olga Benário",
+      "bairro": "Anita Garibaldi",
+      "numero": "288",
+      "cidade": "Guarulhos - SP",
+      "uf": "64",
+      "cep": "07179-840"
+    },
+    "rg": {
+      "numero": "237.091.948-57",
+      "emissao": "23/03/2018",
+      "orgaoEmissor": "9993"
+    }
+  },
+  {
+    "admissao": "12/02/2026",
+    "codigo": 174893,
+    "registro": 321806,
+    "cpf": "040.533.664-02",
+    "dataNascimento": "07/01/1978",
+    "estadoCivil": "1",
+    "nome": "JANICE DE FARIAS PEREIRA",
+    "regime": 1,
+    "sexo": 1,
+    "codVinculo": "0010",
+    "salario": "7,73",
+    "ddd": "11",
+    "telefone": "-914852658",
+    "endereco": {
+      "logradouro": "Rua Quatro-A",
+      "bairro": "Vila Real",
+      "numero": "62",
+      "cidade": "Guarulhos - SP",
+      "uf": "64",
+      "cep": "07261-770"
+    },
+    "rg": {
+      "numero": "040.533.664-02",
+      "emissao": "19/05/1994",
+      "orgaoEmissor": "9993"
+    }
+  }
+]
