@@ -130,7 +130,6 @@ class TransportService {
 
           // Garante que a tabela existe (apenas na primeira iteração)
           if (i === 0) {
-            
             await this.ensureTable(table, dataToInsert, hasIdColumn);
             
             // Limpa tabela antes da inserção se solicitado
@@ -142,6 +141,7 @@ class TransportService {
 
           try {
             // Insere os dados
+            console.log('Dados a inserir:', JSON.stringify(dataToInsert, null, 2));
             const insertId = await this.activeDriver.insert(table, dataToInsert, hasIdColumn);
             recordsInserted++;
 

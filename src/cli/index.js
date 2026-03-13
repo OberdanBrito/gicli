@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+// noinspection SpellCheckingInspection
+
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -283,11 +285,11 @@ async function processFailureOutput(jobConfig, error, itemId, originConfig, mode
   
   // Criar objeto de resultado de falha
   const failureResult = {
-    success: false,
+    success: "0", // Alterado para string para evitar conflito de tipos
     error: errorMessage,
     response: {
       data: {
-        success: 0,
+        success: "0", // Alterado para string para evitar conflito de tipos
         message: errorMessage,
         data: responseData, // Usa os dados extraídos
         job_id: itemId,
@@ -498,122 +500,161 @@ if (importConfigs) {
       }
 
       // Verificar se é processamento em lote
-      const isBatchProcessing = processedJobConfig.batch_processing === true && Array.isArray(processedJobConfig.payload);
+      const batchConfig = processedJobConfig.batch_processing;
+      const isBatchProcessing = batchConfig && typeof batchConfig === 'object' && Array.isArray(processedJobConfig.payload);
 
       if (isBatchProcessing) {
-        if (!silent) {
-          console.log(`Processamento em lote detectado: ${processedJobConfig.payload.length} itens`);
-        }
+        const groupPayload = batchConfig.group_payload === true;
 
-        let totalProcessed = 0;
-        let totalErrors = 0;
-
-        for (let i = 0; i < processedJobConfig.payload.length; i++) {
-          const item = processedJobConfig.payload[i];
-          const itemId = item.registro || item.id || `item_${i + 1}`;
-
+        if (groupPayload) {
+          // Envia o array inteiro como payload em uma única requisição
           if (!silent) {
-            console.log(`Processando item ${i + 1}/${processedJobConfig.payload.length}: ${itemId}`);
+            console.log(`Processamento em lote agrupado: ${processedJobConfig.payload.length} itens em uma única requisição`);
           }
 
-          // Criar cópia da configuração com payload específico do item
-          const itemJobConfig = {
-            ...processedJobConfig,
-            payload: item
-          };
+          loggerService.jobStart(jobId, { origin: originConfig.name, mode });
+          const result = await executionService.executeJob(originConfig, processedJobConfig, mode, silent, allOrigins);
 
-          try {
-            // Executa o job para este item específico
-            const result = await executionService.executeJob(originConfig, itemJobConfig, mode, silent, allOrigins);
+          if (result.success) {
+            const sessionKey = `job_result_${jobId}`;
+            if (result.type === 'auth') {
+              sessionService.set(sessionKey, {
+                authenticated: result.authenticated,
+                timestamp: new Date().toISOString()
+              }, 3600000);
+              jobResults[jobId] = { authenticated: result.authenticated, timestamp: new Date().toISOString() };
+            } else {
+              sessionService.set(sessionKey, {
+                data: result.response.data,
+                headers: result.response.headers,
+                status: result.response.status,
+                timestamp: result.response.timestamp
+              }, 3600000);
+              jobResults[jobId] = {
+                data: result.response.data,
+                headers: result.response.headers,
+                status: result.response.status,
+                timestamp: result.response.timestamp
+              };
+            }
 
-            if (result.success) {
-              // Armazena resultado na sessão para uso por jobs dependentes
-              const sessionKey = `job_result_${jobId}_${itemId}`;
-              if (result.type === 'auth') {
-                sessionService.set(sessionKey, {
-                  authenticated: result.authenticated,
-                  timestamp: new Date().toISOString(),
-                  itemId: itemId
-                }, 3600000);
+            if (result.type !== 'auth') {
+              if (result.response && result.response.status === 400 && processedJobConfig.output && processedJobConfig.output.save_failures && processedJobConfig.output.type === 'database') {
+                await processFailureOutput(processedJobConfig, result, jobId, originConfig, mode);
               } else {
-                sessionService.set(sessionKey, {
-                  data: result.response.data,
-                  headers: result.response.headers,
-                  status: result.response.status,
-                  timestamp: result.response.timestamp,
-                  itemId: itemId
-                }, 3600000);
+                await processJobOutput(processedJobConfig, result, originConfig, mode, silent);
               }
+            }
 
-              // Também armazena em jobResults para template resolution
-              if (result.type === 'auth') {
-                jobResults[`${jobId}_${itemId}`] = {
-                  authenticated: result.authenticated,
-                  timestamp: new Date().toISOString(),
-                  itemId: itemId
-                };
-              } else {
-                jobResults[`${jobId}_${itemId}`] = {
-                  data: result.response.data,
-                  headers: result.response.headers,
-                  status: result.response.status,
-                  timestamp: result.response.timestamp,
-                  itemId: itemId
-                };
-              }
+            if (!silent) {
+              console.log(`✓ Job '${jobId}' processado com sucesso (array agrupado)`);
+            }
+          } else {
+            throw new Error(`Falha no job ${jobId}: ${result.error}`);
+          }
 
-              // Processa saída se configurado (apenas para jobs de request)
-              if (result.type !== 'auth') {
-                // Se status 400 e save_failures ativo, salva como falha
-                if (result.response && result.response.status === 400 && itemJobConfig.output && itemJobConfig.output.save_failures && itemJobConfig.output.type === 'database') {
-                  // Passa o resultado completo em vez de apenas a mensagem
-                  await processFailureOutput(itemJobConfig, result, itemId, originConfig, mode);
+        } else {
+          // Itera sobre cada item e executa uma requisição por item
+          if (!silent) {
+            console.log(`Processamento em lote iterativo: ${processedJobConfig.payload.length} itens`);
+          }
+
+          let totalProcessed = 0;
+          let totalErrors = 0;
+
+          for (let i = 0; i < processedJobConfig.payload.length; i++) {
+            const item = processedJobConfig.payload[i];
+            const itemId = item.registro || item.id || `item_${i + 1}`;
+
+            if (!silent) {
+              console.log(`Processando item ${i + 1}/${processedJobConfig.payload.length}: ${itemId}`);
+            }
+
+            const itemJobConfig = {
+              ...processedJobConfig,
+              payload: item
+            };
+
+            try {
+              const result = await executionService.executeJob(originConfig, itemJobConfig, mode, silent, allOrigins);
+
+              if (result.success) {
+                const sessionKey = `job_result_${jobId}_${itemId}`;
+                if (result.type === 'auth') {
+                  sessionService.set(sessionKey, {
+                    authenticated: result.authenticated,
+                    timestamp: new Date().toISOString(),
+                    itemId: itemId
+                  }, 3600000);
+                  jobResults[`${jobId}_${itemId}`] = {
+                    authenticated: result.authenticated,
+                    timestamp: new Date().toISOString(),
+                    itemId: itemId
+                  };
                 } else {
-                  await processJobOutput(itemJobConfig, result, originConfig, mode, silent);
+                  sessionService.set(sessionKey, {
+                    data: result.response.data,
+                    headers: result.response.headers,
+                    status: result.response.status,
+                    timestamp: result.response.timestamp,
+                    itemId: itemId
+                  }, 3600000);
+                  jobResults[`${jobId}_${itemId}`] = {
+                    data: result.response.data,
+                    headers: result.response.headers,
+                    status: result.response.status,
+                    timestamp: result.response.timestamp,
+                    itemId: itemId
+                  };
+                }
+
+                if (result.type !== 'auth') {
+                  if (result.response && result.response.status === 400 && itemJobConfig.output && itemJobConfig.output.save_failures && itemJobConfig.output.type === 'database') {
+                    await processFailureOutput(itemJobConfig, result, itemId, originConfig, mode);
+                  } else {
+                    await processJobOutput(itemJobConfig, result, originConfig, mode, silent);
+                  }
+                }
+
+                totalProcessed++;
+                if (!silent) {
+                  console.log(`✓ Item ${itemId} processado com sucesso`);
+                }
+              } else {
+                totalErrors++;
+                console.error(`✗ Falha no processamento do item ${itemId}: ${result.error}`);
+
+                if (itemJobConfig.output && itemJobConfig.output.save_failures && itemJobConfig.output.type === 'database') {
+                  try {
+                    await processFailureOutput(itemJobConfig, result.error, itemId, originConfig, mode);
+                  } catch (saveError) {
+                    console.warn(`Aviso: Falha ao salvar erro no banco: ${saveError.message}`);
+                  }
                 }
               }
-
-              totalProcessed++;
-              if (!silent) {
-                console.log(`✓ Item ${itemId} processado com sucesso`);
-              }
-            } else {
+            } catch (error) {
               totalErrors++;
-              console.error(`✗ Falha no processamento do item ${itemId}: ${result.error}`);
+              console.error(`✗ Erro ao processar item ${itemId}: ${error.message}`);
 
-              // Salvar falha no banco de dados se save_failures estiver habilitado
               if (itemJobConfig.output && itemJobConfig.output.save_failures && itemJobConfig.output.type === 'database') {
                 try {
-                  await processFailureOutput(itemJobConfig, result.error, itemId, originConfig, mode);
+                  await processFailureOutput(itemJobConfig, error, itemId, originConfig, mode);
                 } catch (saveError) {
                   console.warn(`Aviso: Falha ao salvar erro no banco: ${saveError.message}`);
                 }
               }
             }
-          } catch (error) {
-            totalErrors++;
-            console.error(`✗ Erro ao processar item ${itemId}: ${error.message}`);
-
-            // Salvar falha no banco de dados se save_failures estiver habilitado
-            if (itemJobConfig.output && itemJobConfig.output.save_failures && itemJobConfig.output.type === 'database') {
-              try {
-                await processFailureOutput(itemJobConfig, error, itemId, originConfig, mode);
-              } catch (saveError) {
-                console.warn(`Aviso: Falha ao salvar erro no banco: ${saveError.message}`);
-              }
-            }
           }
-        }
 
-        if (!silent) {
-          console.log(`\nProcessamento em lote concluído:`);
-          console.log(`  ✓ Sucessos: ${totalProcessed}`);
-          console.log(`  ✗ Erros: ${totalErrors}`);
-        }
+          if (!silent) {
+            console.log(`\nProcessamento em lote concluído:`);
+            console.log(`  ✓ Sucessos: ${totalProcessed}`);
+            console.log(`  ✗ Erros: ${totalErrors}`);
+          }
 
-        // Para processamento em lote, consideramos sucesso se pelo menos um item foi processado
-        if (totalProcessed === 0) {
-          throw new Error(`Falha no processamento em lote: nenhum item foi processado com sucesso`);
+          if (totalProcessed === 0) {
+            throw new Error(`Falha no processamento em lote: nenhum item foi processado com sucesso`);
+          }
         }
 
       } else {

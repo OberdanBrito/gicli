@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.8] - 2026-03-13
+
+### 🐛 Bug Fixes
+- **Conflito de Tipos no SQL Server**: Corrigido erro "Operand type clash: int is incompatible with text" ao inserir dados de falha na tabela ServiceLayerRFPPreAdmitirResultados
+- **Campo Success como String**: Alterado o campo `success` no objeto de falha de boolean/inteiro para string ("0") para compatibilidade com coluna TEXT
+- **Processamento de Saída de Falha**: Ajustado a função `processFailureOutput` para garantir consistência de tipos
+
 ## [0.3.7] - 2025-02-03
 
 ### 🔒 Security
