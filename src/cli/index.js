@@ -722,6 +722,7 @@ if (importConfigs) {
           // Limpa contexto de logging (sempre executado, mesmo em caso de erro)
           loggerService.jobEnd(jobId, result?.success || false);
         }
+      }
     }
 
     if (!silent) {
