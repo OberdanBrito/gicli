@@ -1,6 +1,6 @@
 {
   "name": "@tecnologiagruposrm/gicli",
-  "version": "0.5.19",
+  "version": "0.5.20",
   "description": "Gestor de Integrações - CLI tool for managing API integrations",
   "main": "src/cli/index.js",
   "type": "module",
@@ -11,7 +11,6 @@
     "dev": "node src/cli/index.js",
     "test": "node src/cli/index.js --help && echo 'CLI syntax validation passed'",
     "start": "node src/cli/index.js"
-    
   },
   "keywords": [
     "cli",
