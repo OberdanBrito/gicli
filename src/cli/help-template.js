@@ -25,6 +25,7 @@ Argumentos disponíveis:
   --payload-file       Arquivo JSON com payload dinâmico para a requisição
   --params-file        Arquivo JSON com parâmetros dinâmicos para a requisição
   --output-response-params  Salva metadados da resposta da API em output-response-params.js
+  --version            Exibe a versão do gicli
   -h, --help           Exibe esta mensagem de ajuda
 
 Variáveis de Substituição:

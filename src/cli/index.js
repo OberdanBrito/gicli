@@ -347,6 +347,10 @@ for (let i = 0; i < args.length; i++) {
       await showHelp();
       process.exit(0);
       break;
+    case '--version':
+      console.log(packageInfo.version);
+      process.exit(0);
+      break;
     case '-i':
     case '--import':
       importConfigs = true;
