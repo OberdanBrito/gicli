@@ -162,7 +162,7 @@ class HttpClientService {
   async parseResponse(response) {
     const contentType = response.headers.get('content-type');
 
-    if (contentType?.includes('application/json')) {
+    if (contentType?.includes('application/json') || contentType?.includes('application/problem+json')) {
       return response.json();
     }
 
