@@ -707,23 +707,21 @@ if (importConfigs) {
           } else {
             throw new Error(`Falha no job ${jobId}: ${result.error}`);
           }
+        } catch (error) {
+          // Salvar falha no banco de dados se save_failures estiver habilitado (para processamento normal)
+          if (processedJobConfig.output && processedJobConfig.output.save_failures && processedJobConfig.output.type === 'database') {
+            try {
+              await processFailureOutput(processedJobConfig, error, jobId, originConfig, mode);
+            } catch (saveError) {
+              console.warn(`Aviso: Falha ao salvar erro no banco: ${saveError.message}`);
+            }
+          }
+          
+          throw error;
         } finally {
           // Limpa contexto de logging (sempre executado, mesmo em caso de erro)
           loggerService.jobEnd(jobId, result?.success || false);
         }
-        
-      } catch (error) {
-        // Salvar falha no banco de dados se save_failures estiver habilitado (para processamento normal)
-        if (processedJobConfig.output && processedJobConfig.output.save_failures && processedJobConfig.output.type === 'database') {
-          try {
-            await processFailureOutput(processedJobConfig, error, jobId, originConfig, mode);
-          } catch (saveError) {
-            console.warn(`Aviso: Falha ao salvar erro no banco: ${saveError.message}`);
-          }
-        }
-        
-        throw error;
-      }
     }
 
     if (!silent) {
