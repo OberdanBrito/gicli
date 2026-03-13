@@ -264,7 +264,22 @@ async function processFailureOutput(jobConfig, error, itemId, originConfig, mode
     return;
   }
 
-  const errorMessage = error instanceof Error ? error.message : error;
+  console.log('Processando saída de falha para banco de dados...');
+  console.log('Error:', error);
+  console.log('ItemId:', itemId);  
+  
+  // Se error é um objeto result (com response), extrai a mensagem de lá
+  let errorMessage;
+  let responseData = null;
+  
+  if (error && error.response) {
+    // É um objeto result
+    errorMessage = error.response.data?.message || `HTTP ${error.response.status}`;
+    responseData = error.response.data;
+  } else {
+    // É um erro ou string
+    errorMessage = error instanceof Error ? error.message : error;
+  }
   
   // Criar objeto de resultado de falha
   const failureResult = {
@@ -274,7 +289,7 @@ async function processFailureOutput(jobConfig, error, itemId, originConfig, mode
       data: {
         success: 0,
         message: errorMessage,
-        data: null,
+        data: responseData, // Usa os dados extraídos
         job_id: itemId,
         timestamp: new Date().toISOString(),
         origin: originConfig.name
@@ -549,7 +564,13 @@ if (importConfigs) {
 
               // Processa saída se configurado (apenas para jobs de request)
               if (result.type !== 'auth') {
-                await processJobOutput(itemJobConfig, result, originConfig, mode, silent);
+                // Se status 400 e save_failures ativo, salva como falha
+                if (result.response && result.response.status === 400 && itemJobConfig.output && itemJobConfig.output.save_failures && itemJobConfig.output.type === 'database') {
+                  // Passa o resultado completo em vez de apenas a mensagem
+                  await processFailureOutput(itemJobConfig, result, itemId, originConfig, mode);
+                } else {
+                  await processJobOutput(itemJobConfig, result, originConfig, mode, silent);
+                }
               }
 
               totalProcessed++;
@@ -645,7 +666,12 @@ if (importConfigs) {
             // Processa saída se configurado (apenas para jobs de request)
             let outputResult = null;
             if (result.type !== 'auth') {
-              outputResult = await processJobOutput(processedJobConfig, result, originConfig, mode, silent);
+              // Se status 400 e save_failures ativo, salva como falha
+              if (result.response && result.response.status === 400 && processedJobConfig.output && processedJobConfig.output.save_failures && processedJobConfig.output.type === 'database') {
+                outputResult = await processFailureOutput(processedJobConfig, result, jobId, originConfig, mode);
+              } else {
+                outputResult = await processJobOutput(processedJobConfig, result, originConfig, mode, silent);
+              }
             }
 
             // Se for modo teste E não silencioso, mostra resultado

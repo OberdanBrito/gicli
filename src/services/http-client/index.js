@@ -67,7 +67,18 @@ class HttpClientService {
         const responseData = await this.parseResponse(response);
 
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          const error = new Error(`HTTP ${response.status}: ${response.statusText}`);
+          error.status = response.status;
+          error.statusText = response.statusText;
+          error.data = responseData;
+          error.response = {
+            status: response.status,
+            statusText: response.statusText,
+            headers: Object.fromEntries(response.headers.entries()),
+            data: responseData,
+            url: response.url
+          };
+          throw error;
         }
 
         return {

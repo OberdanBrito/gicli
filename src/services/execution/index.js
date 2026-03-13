@@ -1,3 +1,5 @@
+// noinspection SpellCheckingInspection
+
 import httpClientService from '../http-client/index.js';
 import authService from '../auth/index.js';
 import environmentService from '../environment/index.js';
@@ -64,6 +66,8 @@ class ExecutionService {
 
         // Executa a requisição
         const result = await this.executeRequest(originConfig, jobConfig, mode);
+
+        console.log('Result==================:', result);
 
         return {
           success: true,
@@ -183,6 +187,11 @@ class ExecutionService {
         }
       }
 
+      // Se recebeu 400, loga para debug mas continua processando a resposta
+      if (response.status === 400) {
+        loggerService.info(`Recebido 400 para job ${jobConfig.id} - processando resposta de erro`);
+      }
+
       // Processa a resposta baseado no formato esperado
       const processedResponse = this.processResponse(response, jobConfig.response_format);
 
@@ -244,6 +253,20 @@ class ExecutionService {
           loggerService.warn(`Falha na tentativa de retry após renovação: ${retryError.message}`);
           throw error; // Lança o erro original
         }
+      }
+
+      // Se é erro 400, retorna a resposta com a mensagem detalhada
+      if (error.message.includes('HTTP 400') && error.response) {
+        loggerService.info(`Erro 400 para job ${jobConfig.id} - retornando resposta detalhada`);
+        return {
+          url: error.response.url,
+          method: jobConfig.method,
+          status: error.response.status,
+          statusText: error.response.statusText,
+          headers: error.response.headers,
+          data: error.response.data,
+          timestamp: new Date().toISOString()
+        };
       }
 
       // Para outros erros ou se já tentou renovar auth, lança o erro
