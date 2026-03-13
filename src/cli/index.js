@@ -468,11 +468,16 @@ if (importConfigs) {
         }
       }
 
-      // Se params file foi especificado, ler e injetar nos params
+      // Se params file foi especificado, ler e injetar nos params ou payload
       if (paramsFile) {
         try {
           const paramsContent = readFileSync(paramsFile, 'utf-8');
-          processedJobConfig.params = JSON.parse(paramsContent);
+          const paramsData = JSON.parse(paramsContent);
+          if (processedJobConfig.method === 'POST') {
+            processedJobConfig.payload = paramsData;
+          } else {
+            processedJobConfig.params = paramsData;
+          }
           if (!silent) {
             console.log(`Parâmetros dinâmicos carregados de: ${paramsFile}`);
           }
@@ -481,120 +486,218 @@ if (importConfigs) {
         }
       }
 
-      loggerService.jobStart(jobId, { origin: originConfig.name, mode });
+      // Verificar se é processamento em lote
+      const isBatchProcessing = processedJobConfig.batch_processing === true && Array.isArray(processedJobConfig.payload);
 
-      let result = null;
-      try {
-        // Executa o job
-        result = await executionService.executeJob(originConfig, processedJobConfig, mode, silent, allOrigins);
+      if (isBatchProcessing) {
+        if (!silent) {
+          console.log(`Processamento em lote detectado: ${processedJobConfig.payload.length} itens`);
+        }
 
-        if (result.success) {
-          // Armazena resultado na sessão para uso por jobs dependentes
-          const sessionKey = `job_result_${jobId}`;
-          if (result.type === 'auth') {
-            // Para jobs de auth, armazena apenas o status de autenticação
-            sessionService.set(sessionKey, {
-              authenticated: result.authenticated,
-              timestamp: new Date().toISOString()
-            }, 3600000); // 1 hora de TTL
-          } else {
-            // Para jobs de request, armazena os dados da resposta
-            sessionService.set(sessionKey, {
-              data: result.response.data,
-              headers: result.response.headers,
-              status: result.response.status,
-              timestamp: result.response.timestamp
-            }, 3600000); // 1 hora de TTL
-          }
+        let totalProcessed = 0;
+        let totalErrors = 0;
 
-          // Também armazena em jobResults para template resolution
-          if (result.type === 'auth') {
-            jobResults[jobId] = {
-              authenticated: result.authenticated,
-              timestamp: new Date().toISOString()
-            };
-          } else {
-            jobResults[jobId] = {
-              data: result.response.data,
-              headers: result.response.headers,
-              status: result.response.status,
-              timestamp: result.response.timestamp
-            };
-          }
+        for (let i = 0; i < processedJobConfig.payload.length; i++) {
+          const item = processedJobConfig.payload[i];
+          const itemId = item.registro || item.id || `item_${i + 1}`;
 
           if (!silent) {
-            console.log(`Job '${jobId}' executado com sucesso`);
+            console.log(`Processando item ${i + 1}/${processedJobConfig.payload.length}: ${itemId}`);
           }
 
-          // Processa saída se configurado (apenas para jobs de request)
-          let outputResult = null;
-          if (result.type !== 'auth') {
-            outputResult = await processJobOutput(processedJobConfig, result, originConfig, mode, silent);
-          }
+          // Criar cópia da configuração com payload específico do item
+          const itemJobConfig = {
+            ...processedJobConfig,
+            payload: item
+          };
 
-          // Se for modo teste E não silencioso, mostra resultado
-          if (mode === 'test' && !silent) {
-            const resultToShow = { ...result };
-            if (outputResult) {
-              resultToShow.output = outputResult;
-            }
-            console.log(`Resultado de ${jobId}:`, JSON.stringify(resultToShow, null, 2));
-          }
+          try {
+            // Executa o job para este item específico
+            const result = await executionService.executeJob(originConfig, itemJobConfig, mode, silent, allOrigins);
 
-          // Se --output-response-params foi especificado, salva resposta da API
-          if (outputResponseParams && result.type !== 'auth') {
-            try {
-              // Extrair metadados da resposta da API antes de salvar
-              let responseToSave = { ...result.response };
-              
-              // Se o campo data contém dados da API (objeto), extrair metadados
-              if (responseToSave.data && typeof responseToSave.data === 'object') {
-                try {
-                  const apiData = responseToSave.data;
-                  
-                  // Adicionar metadados da API no nível superior
-                  responseToSave = {
-                    ...responseToSave,
-                    currentPage: apiData.currentPage,
-                    totalPages: apiData.totalPages,
-                    pageSize: apiData.pageSize,
-                    totalCount: apiData.totalCount,
-                    hasPrevious: apiData.hasPrevious,
-                    hasNext: apiData.hasNext,
-                    succeeded: apiData.succeeded,
-                    errors: apiData.errors,
-                    message: apiData.message
-                  };
-                } catch (parseError) {
-                  // Se não conseguir extrair, manter estrutura original
-                  console.warn(`Aviso: Não foi possível extrair metadados da resposta da API: ${parseError.message}`);
-                }
+            if (result.success) {
+              // Armazena resultado na sessão para uso por jobs dependentes
+              const sessionKey = `job_result_${jobId}_${itemId}`;
+              if (result.type === 'auth') {
+                sessionService.set(sessionKey, {
+                  authenticated: result.authenticated,
+                  timestamp: new Date().toISOString(),
+                  itemId: itemId
+                }, 3600000);
+              } else {
+                sessionService.set(sessionKey, {
+                  data: result.response.data,
+                  headers: result.response.headers,
+                  status: result.response.status,
+                  timestamp: result.response.timestamp,
+                  itemId: itemId
+                }, 3600000);
               }
-              
-              // Agora remover o campo "data" que contém os registros
-              if (responseToSave.data) {
-                responseToSave.data = "[REMOVIDO - CAMPO DE DADOS]";
+
+              // Também armazena em jobResults para template resolution
+              if (result.type === 'auth') {
+                jobResults[`${jobId}_${itemId}`] = {
+                  authenticated: result.authenticated,
+                  timestamp: new Date().toISOString(),
+                  itemId: itemId
+                };
+              } else {
+                jobResults[`${jobId}_${itemId}`] = {
+                  data: result.response.data,
+                  headers: result.response.headers,
+                  status: result.response.status,
+                  timestamp: result.response.timestamp,
+                  itemId: itemId
+                };
               }
-              
-              // Salva sempre no arquivo "output-response-params.js"
-              const outputFilePath = './output-response-params.js';
-              const fs = await import('fs');
-              fs.writeFileSync(outputFilePath, JSON.stringify(responseToSave, null, 2), 'utf8');
-              
+
+              // Processa saída se configurado (apenas para jobs de request)
+              if (result.type !== 'auth') {
+                await processJobOutput(itemJobConfig, result, originConfig, mode, silent);
+              }
+
+              totalProcessed++;
               if (!silent) {
-                console.log(`Resposta da API salva em: ${outputFilePath}`);
+                console.log(`✓ Item ${itemId} processado com sucesso`);
               }
-            } catch (saveError) {
-              console.warn(`Aviso: Não foi possível salvar resposta da API: ${saveError.message}`);
+            } else {
+              totalErrors++;
+              console.error(`✗ Falha no processamento do item ${itemId}: ${result.error}`);
             }
+          } catch (error) {
+            totalErrors++;
+            console.error(`✗ Erro ao processar item ${itemId}: ${error.message}`);
           }
-
-        } else {
-          throw new Error(`Falha no job ${jobId}: ${result.error}`);
         }
-      } finally {
-        // Limpa contexto de logging (sempre executado, mesmo em caso de erro)
-        loggerService.jobEnd(jobId, result?.success || false);
+
+        if (!silent) {
+          console.log(`\nProcessamento em lote concluído:`);
+          console.log(`  ✓ Sucessos: ${totalProcessed}`);
+          console.log(`  ✗ Erros: ${totalErrors}`);
+        }
+
+        // Para processamento em lote, consideramos sucesso se pelo menos um item foi processado
+        if (totalProcessed === 0) {
+          throw new Error(`Falha no processamento em lote: nenhum item foi processado com sucesso`);
+        }
+
+      } else {
+        // Processamento normal (único item)
+        loggerService.jobStart(jobId, { origin: originConfig.name, mode });
+
+        let result = null;
+        try {
+          // Executa o job
+          result = await executionService.executeJob(originConfig, processedJobConfig, mode, silent, allOrigins);
+
+          if (result.success) {
+            // Armazena resultado na sessão para uso por jobs dependentes
+            const sessionKey = `job_result_${jobId}`;
+            if (result.type === 'auth') {
+              // Para jobs de auth, armazena apenas o status de autenticação
+              sessionService.set(sessionKey, {
+                authenticated: result.authenticated,
+                timestamp: new Date().toISOString()
+              }, 3600000); // 1 hora de TTL
+            } else {
+              // Para jobs de request, armazena os dados da resposta
+              sessionService.set(sessionKey, {
+                data: result.response.data,
+                headers: result.response.headers,
+                status: result.response.status,
+                timestamp: result.response.timestamp
+              }, 3600000); // 1 hora de TTL
+            }
+
+            // Também armazena em jobResults para template resolution
+            if (result.type === 'auth') {
+              jobResults[jobId] = {
+                authenticated: result.authenticated,
+                timestamp: new Date().toISOString()
+              };
+            } else {
+              jobResults[jobId] = {
+                data: result.response.data,
+                headers: result.response.headers,
+                status: result.response.status,
+                timestamp: result.response.timestamp
+              };
+            }
+
+            if (!silent) {
+              console.log(`Job '${jobId}' executado com sucesso`);
+            }
+
+            // Processa saída se configurado (apenas para jobs de request)
+            let outputResult = null;
+            if (result.type !== 'auth') {
+              outputResult = await processJobOutput(processedJobConfig, result, originConfig, mode, silent);
+            }
+
+            // Se for modo teste E não silencioso, mostra resultado
+            if (mode === 'test' && !silent) {
+              const resultToShow = { ...result };
+              if (outputResult) {
+                resultToShow.output = outputResult;
+              }
+              console.log(`Resultado de ${jobId}:`, JSON.stringify(resultToShow, null, 2));
+            }
+
+            // Se --output-response-params foi especificado, salva resposta da API
+            if (outputResponseParams && result.type !== 'auth') {
+              try {
+                // Extrair metadados da resposta da API antes de salvar
+                let responseToSave = { ...result.response };
+
+                // Se o campo data contém dados da API (objeto), extrair metadados
+                if (responseToSave.data && typeof responseToSave.data === 'object') {
+                  try {
+                    const apiData = responseToSave.data;
+
+                    // Adicionar metadados da API no nível superior
+                    responseToSave = {
+                      ...responseToSave,
+                      currentPage: apiData.currentPage,
+                      totalPages: apiData.totalPages,
+                      pageSize: apiData.pageSize,
+                      totalCount: apiData.totalCount,
+                      hasPrevious: apiData.hasPrevious,
+                      hasNext: apiData.hasNext,
+                      succeeded: apiData.succeeded,
+                      errors: apiData.errors,
+                      message: apiData.message
+                    };
+                  } catch (parseError) {
+                    // Se não conseguir extrair, manter estrutura original
+                    console.warn(`Aviso: Não foi possível extrair metadados da resposta da API: ${parseError.message}`);
+                  }
+                }
+
+                // Agora remover o campo "data" que contém os registros
+                if (responseToSave.data) {
+                  responseToSave.data = "[REMOVIDO - CAMPO DE DADOS]";
+                }
+
+                // Salva sempre no arquivo "output-response-params.js"
+                const outputFilePath = './output-response-params.js';
+                const fs = await import('fs');
+                fs.writeFileSync(outputFilePath, JSON.stringify(responseToSave, null, 2), 'utf8');
+
+                if (!silent) {
+                  console.log(`Resposta da API salva em: ${outputFilePath}`);
+                }
+              } catch (saveError) {
+                console.warn(`Aviso: Não foi possível salvar resposta da API: ${saveError.message}`);
+              }
+            }
+
+          } else {
+            throw new Error(`Falha no job ${jobId}: ${result.error}`);
+          }
+        } finally {
+          // Limpa contexto de logging (sempre executado, mesmo em caso de erro)
+          loggerService.jobEnd(jobId, result?.success || false);
+        }
       }
 
     }
