@@ -148,7 +148,11 @@ class ExecutionService {
 
       // Adiciona body se houver
       if (processedPayload && jobConfig.method !== 'GET') {
-        httpOptions.body = processedPayload;
+        // Se o payload já for uma string, usa como está
+        // Se for objeto, converte para JSON string
+        httpOptions.body = typeof processedPayload === 'string' 
+          ? processedPayload 
+          : JSON.stringify(processedPayload);
       }
 
       // Faz a requisição

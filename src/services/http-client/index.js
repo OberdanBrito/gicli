@@ -44,9 +44,15 @@ class HttpClientService {
         if (body && (method.toUpperCase() !== 'GET' && method.toUpperCase() !== 'HEAD')) {
           if (typeof body === 'object') {
             fetchConfig.body = JSON.stringify(body);
-            fetchConfig.headers['Content-Type'] = 'application/json';
+            if (!fetchConfig.headers['Content-Type']) {
+              fetchConfig.headers['Content-Type'] = 'application/json';
+            }
           } else {
+            // Se body já for string (JSON), usa como está
             fetchConfig.body = body;
+            if (!fetchConfig.headers['Content-Type']) {
+              fetchConfig.headers['Content-Type'] = 'application/json';
+            }
           }
         }
 
