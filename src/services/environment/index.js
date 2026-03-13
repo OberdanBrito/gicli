@@ -1,3 +1,5 @@
+// noinspection SpellCheckingInspection
+
 import { homedir } from 'os';
 import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto';
 import { config } from 'dotenv';
