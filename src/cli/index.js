@@ -1,45 +1,25 @@
-#!/usr/bin/env node
-
-import importService from '../services/import/index.js';
-import executionService from '../services/execution/index.js';
-import transportService from '../services/transport/index.js';
-import fileOutputService from '../services/file-output/index.js';
-import loggerService from '../services/logger/index.js';
-import { DependencyResolver } from '../services/dependency-resolver/index.js';
-import sessionService from '../services/session/index.js';
-import environmentService from '../services/environment/index.js';
-import swaggerGeneratorService from '../services/swagger-generator/index.js';
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import loggerService from '../services/logger/index.js';
+import importService from '../services/import/index.js';
+import environmentService from '../services/environment/index.js';
+import executionService from '../services/execution/index.js';
+import fileOutputService from '../services/file-output/index.js';
+import transportService from '../services/transport/index.js';
+import sessionService from '../services/session/index.js';
+import swaggerGeneratorService from '../services/swagger-generator/index.js';
+import { DependencyResolver } from '../services/dependency-resolver/index.js';
 
-// Set dotenvx quiet mode to suppress messages
-process.env.DOTENVX_QUIET = '1';
-process.env.DOTENV_SUPPRESS_DEBUG_MESSAGES = 'true';
-
+// Parse arguments
 const args = process.argv.slice(2);
 
-// Verificar comandos de criptografia antes do parsing normal
-if (args[0] === 'encrypt' || args[0] === 'decrypt') {
-  await handleCryptCommand(args[0], args[1]);
-  process.exit(0);
-}
-
-// Verificar comando generate-config
-if (args[0] === 'generate-config') {
-  await handleGenerateConfigCommand(args.slice(1));
-  process.exit(0);
-}
-
-// Verificar comando list
-if (args[0] === 'list') {
-  const tipo = args[1];
-  const origem = args[2];
-  if (!tipo || !origem) {
-    console.error('Uso: gicli list <tipo> <origem>');
-    console.log('Tipos disponíveis: names, ids');
-    process.exit(1);
-  }
+/**
+ * Lista jobs de uma origem
+ * @param {string} tipo - 'names' ou 'ids'
+ * @param {string} origem - Nome da origem
+ */
+async function listJobs(tipo, origem) {
   try {
     await importService.loadConfigurations(false, null, null);
     let jobList;
@@ -264,10 +244,45 @@ async function processJobOutput(jobConfig, jobResult, originConfig, mode, silent
 
       return outputResult;
     }
-  } catch (outputError) {
-    console.warn(`Aviso: Falha ao processar saída para job ${jobConfig.id}:`, outputError.message);
-    return { success: false, error: outputError.message };
+  } catch (error) {
+    console.warn(`Aviso: Falha ao processar saída para job ${jobConfig.id}:`, error.message);
+    return { success: false, error: error.message };
   }
+}
+
+/**
+ * Processa saída de falha para banco de dados
+ * @param {object} jobConfig - Configuração do job
+ * @param {Error|string} error - Erro ocorrido
+ * @param {string} itemId - ID do item processado
+ * @param {object} originConfig - Configuração da origem
+ * @param {string} mode - Modo de execução
+ */
+async function processFailureOutput(jobConfig, error, itemId, originConfig, mode) {
+  if (!jobConfig.output?.enabled || !jobConfig.output.save_failures) {
+    return;
+  }
+
+  const errorMessage = error instanceof Error ? error.message : error;
+  
+  // Criar objeto de resultado de falha
+  const failureResult = {
+    success: false,
+    error: errorMessage,
+    response: {
+      data: {
+        success: 0,
+        message: errorMessage,
+        data: null,
+        job_id: itemId,
+        timestamp: new Date().toISOString(),
+        origin: originConfig.name
+      }
+    }
+  };
+
+  // Usar a mesma lógica de processamento de output normal
+  await processJobOutput(jobConfig, failureResult, originConfig, mode, true);
 }
 
 // Parse arguments
@@ -324,6 +339,8 @@ for (let i = 0; i < args.length; i++) {
       break;
     case '-s':
     case '--silent':
+      silent = true;
+      break;
     case '--list':
       listType = args[++i];
       listOrigin = args[++i];
@@ -378,28 +395,7 @@ if (importConfigs) {
     process.exit(1);
   }
 } else if (listType && listOrigin) {
-  try {
-    await importService.loadConfigurations(false, configDir, configFile);
-    let jobList;
-    if (listType === 'names') {
-      jobList = importService.listJobNamesByOrigin(listOrigin);
-    } else if (listType === 'ids') {
-      jobList = importService.listJobIdsByOrigin(listOrigin);
-    } else {
-      console.error(`Tipo inválido: ${listType}. Use 'names' ou 'ids'.`);
-      process.exit(1);
-    }
-    if (jobList.length === 0) {
-      console.log(`Nenhum job encontrado para a origem '${listOrigin}'.`);
-    } else {
-      console.log(`Jobs da origem '${listOrigin}':`);
-      jobList.forEach(job => console.log(`  - ${job}`));
-    }
-    process.exit(0);
-  } catch (error) {
-    console.error('Erro ao listar jobs:', error.message);
-    process.exit(1);
-  }
+  await listJobs(listType, listOrigin);
 } else if (mode && jobName) {
   // Execute job com sistema de dependências
   try {
@@ -450,7 +446,6 @@ if (importConfigs) {
     // Executa jobs em ordem de dependências
     for (const jobId of executionOrder) {
       const jobConfig = allJobs.find(job => job.id === jobId);
-
 
       // Aplica template variables e substituições de ambiente
       let processedJobConfig = environmentService.substituteDeep(jobConfig, originConfig.name, jobResults);
@@ -563,10 +558,28 @@ if (importConfigs) {
             } else {
               totalErrors++;
               console.error(`✗ Falha no processamento do item ${itemId}: ${result.error}`);
+
+              // Salvar falha no banco de dados se save_failures estiver habilitado
+              if (itemJobConfig.output && itemJobConfig.output.save_failures && itemJobConfig.output.type === 'database') {
+                try {
+                  await processFailureOutput(itemJobConfig, result.error, itemId, originConfig, mode);
+                } catch (saveError) {
+                  console.warn(`Aviso: Falha ao salvar erro no banco: ${saveError.message}`);
+                }
+              }
             }
           } catch (error) {
             totalErrors++;
             console.error(`✗ Erro ao processar item ${itemId}: ${error.message}`);
+
+            // Salvar falha no banco de dados se save_failures estiver habilitado
+            if (itemJobConfig.output && itemJobConfig.output.save_failures && itemJobConfig.output.type === 'database') {
+              try {
+                await processFailureOutput(itemJobConfig, error, itemId, originConfig, mode);
+              } catch (saveError) {
+                console.warn(`Aviso: Falha ao salvar erro no banco: ${saveError.message}`);
+              }
+            }
           }
         }
 
@@ -698,8 +711,19 @@ if (importConfigs) {
           // Limpa contexto de logging (sempre executado, mesmo em caso de erro)
           loggerService.jobEnd(jobId, result?.success || false);
         }
+        
+      } catch (error) {
+        // Salvar falha no banco de dados se save_failures estiver habilitado (para processamento normal)
+        if (processedJobConfig.output && processedJobConfig.output.save_failures && processedJobConfig.output.type === 'database') {
+          try {
+            await processFailureOutput(processedJobConfig, error, jobId, originConfig, mode);
+          } catch (saveError) {
+            console.warn(`Aviso: Falha ao salvar erro no banco: ${saveError.message}`);
+          }
+        }
+        
+        throw error;
       }
-
     }
 
     if (!silent) {
