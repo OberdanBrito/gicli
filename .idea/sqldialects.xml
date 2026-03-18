@@ -2,5 +2,8 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/../srm.gicli.customs/Jira/pre_processo.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/../srm.gicli.customs/atualizar_correspondencias.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/../srm.gicli.customs/src/servicelayer_pre_processo_payload.sql" dialect="TSQL" />
+    <file url="PROJECT" dialect="TSQL" />
   </component>
 </project>

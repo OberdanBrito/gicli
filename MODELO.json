@@ -1,0 +1,40 @@
+{
+  "admissao": "2023-10-26T00:00:00",
+  "codCargo": "199",
+  "codFuncao": "199",
+  "codDepartamento": "00150",
+  "codigo": "12345",
+  "codUnidade": "01000",
+  "cpf": "12345678910",
+  "dataNascimento": "1990-01-01T00:00:00",
+  "estadoCivil": "1",
+  "grauInstrucao": "7",
+  "falhageral": 1,
+  "nome": "João Silva",
+  "qualificacao": "0",
+  "regime": 1,
+  "registro": "12345",
+  "sexo": 1,
+  "teletrabalho": "0",
+  "codHorario": "1",
+  "codVinculo": "0010",
+  "salario": "5000.00",
+  "nomePai": "José Silva",
+  "nomeMae": "Maria Silva",
+  "ddd": "11",
+  "telefone": "99999-9999",
+  "endereco": {
+    "logradouro": "Rua Exemplo",
+    "bairro": "Centro",
+    "numero": "123",
+    "cidade": "São Paulo",
+    "uf": "SP",
+    "cep": "01234-567",
+    "complemento": "Apto 101"
+  },
+  "rg": {
+    "numero": "12345678",
+    "emissao": "2010-01-01T00:00:00Z",
+    "orgaoEmissor": "SSP"
+  }
+}
