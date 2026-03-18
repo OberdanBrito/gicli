@@ -2,9 +2,6 @@
 // noinspection SpellCheckingInspection
 
 import { readFileSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-import loggerService from '../services/logger/index.js';
 import importService from '../services/import/index.js';
 import environmentService from '../services/environment/index.js';
 import executionService from '../services/execution/index.js';
@@ -13,85 +10,15 @@ import transportService from '../services/transport/index.js';
 import sessionService from '../services/session/index.js';
 import swaggerGeneratorService from '../services/swagger-generator/index.js';
 import { DependencyResolver } from '../services/dependency-resolver/index.js';
+import VersionService from '../services/version/VersionService.js';
+import loggerService from '../services/logger/index.js';
+import { getHelpText } from './help-template.js';
+import packageInfo from '../../package.json' with { type: 'json' };
+import paramsListJobs from './params-ListJobs.js';
+import handleCryptCommand from './params-Crypt.js';
 
 // Parse arguments
 const args = process.argv.slice(2);
-
-/**
- * Lista jobs de uma origem
- * @param {string} tipo - 'names' ou 'ids'
- * @param {string} origem - Nome da origem
- */
-async function listJobs(tipo, origem) {
-  try {
-    await importService.loadConfigurations(false, null, null);
-    let jobList;
-    if (tipo === 'names') {
-      jobList = importService.listJobNamesByOrigin(origem);
-    } else if (tipo === 'ids') {
-      jobList = importService.listJobIdsByOrigin(origem);
-    } else {
-      console.error(`Tipo inválido: ${tipo}. Use 'names' ou 'ids'.`);
-      process.exit(1);
-    }
-    if (jobList.length === 0) {
-      console.log(`Nenhum job encontrado para a origem '${origem}'.`);
-    } else {
-      console.log(`Jobs da origem '${origem}':`);
-      jobList.forEach(job => console.log(`  - ${job}`));
-    }
-    process.exit(0);
-  } catch (error) {
-    console.error('Erro ao listar jobs:', error.message);
-    process.exit(1);
-  }
-}
-
-// Ler informações do package.json do próprio módulo
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const packageInfo = JSON.parse(readFileSync(join(__dirname, '../../package.json'), 'utf-8'));
-
-async function showHelp() {
-  const { getHelpText } = await import('./help-template.js');
-  console.log(getHelpText(packageInfo));
-}
-
-/**
- * Lida com comandos de criptografia/descriptografia
- * @param {string} command - 'encrypt' ou 'decrypt'
- * @param {string} text - Texto para processar (opcional, lê do stdin se não fornecido)
- */
-async function handleCryptCommand(command, text) {
-  try {
-    // Carrega variáveis de ambiente para garantir ENV_ENCRYPTION_KEY
-    await importService.loadConfigurations(false, null, null);
-    
-    // Se não foi fornecido texto, lê do stdin
-    if (!text) {
-      text = await readFromStdin();
-    }
-    
-    if (!text) {
-      console.error('Erro: Nenhum texto fornecido');
-      console.log('Uso: gicli encrypt <texto> ou echo "texto" | gicli encrypt');
-      process.exit(1);
-    }
-    
-    let result;
-    if (command === 'encrypt') {
-      result = environmentService.encrypt(text);
-      console.log(result);
-    } else if (command === 'decrypt') {
-      result = environmentService.decrypt(text);
-      console.log(result);
-    }
-    
-  } catch (error) {
-    console.error(`Erro ao ${command === 'encrypt' ? 'criptografar' : 'descriptografar'}:`, error.message);
-    process.exit(1);
-  }
-}
 
 /**
  * Lida com comando generate-config
@@ -156,30 +83,10 @@ async function handleGenerateConfigCommand(args) {
 }
 
 /**
- * Lê texto do stdin
- * @returns {Promise<string>} Texto lido
+ * Exibe o texto de ajuda da CLI
  */
-function readFromStdin() {
-  return new Promise((resolve) => {
-    let data = '';
-    let timeout = setTimeout(() => {
-      resolve(''); // Timeout para evitar hanging
-    }, 1000);
-    
-    process.stdin.setEncoding('utf8');
-    process.stdin.on('data', (chunk) => {
-      clearTimeout(timeout);
-      data += chunk;
-    });
-    process.stdin.on('end', () => {
-      clearTimeout(timeout);
-      resolve(data.trim());
-    });
-    process.stdin.on('error', () => {
-      clearTimeout(timeout);
-      resolve('');
-    });
-  });
+async function showHelp() {
+  console.log(getHelpText(packageInfo));
 }
 
 /**
@@ -319,6 +226,23 @@ let outputResponseParams = false;
 let listType = null;
 let listOrigin = null;
 
+// Tratar comandos diretos (não começam com -)
+if (args.length > 0 && !args[0].startsWith('-')) {
+  const command = args[0];
+  
+  if (command === 'encrypt' || command === 'decrypt') {
+    await handleCryptCommand(command, args[1]);
+    process.exit(0);
+  } else if (command === 'generate-config') {
+    await handleGenerateConfigCommand(args.slice(1));
+    process.exit(0);
+  } else {
+    console.error(`Comando desconhecido: ${command}`);
+    await showHelp();
+    process.exit(1);
+  }
+}
+
 for (let i = 0; i < args.length; i++) {
   const arg = args[i];
   switch (arg) {
@@ -348,7 +272,8 @@ for (let i = 0; i < args.length; i++) {
       process.exit(0);
       break;
     case '--version':
-      console.log(packageInfo.version);
+      const versionService = new VersionService();
+      console.log(versionService.getVersion());
       process.exit(0);
       break;
     case '-i':
@@ -417,7 +342,7 @@ if (importConfigs) {
     process.exit(1);
   }
 } else if (listType && listOrigin) {
-  await listJobs(listType, listOrigin);
+  await paramsListJobs(listType, listOrigin);
 } else if (mode && jobName) {
   // Execute job com sistema de dependências
   try {
