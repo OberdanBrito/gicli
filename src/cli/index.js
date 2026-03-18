@@ -8,7 +8,6 @@ import executionService from '../services/execution/index.js';
 import fileOutputService from '../services/file-output/index.js';
 import transportService from '../services/transport/index.js';
 import sessionService from '../services/session/index.js';
-import swaggerGeneratorService from '../services/swagger-generator/index.js';
 import { DependencyResolver } from '../services/dependency-resolver/index.js';
 import VersionService from '../services/version/VersionService.js';
 import loggerService from '../services/logger/index.js';
@@ -16,71 +15,10 @@ import { getHelpText } from './help-template.js';
 import packageInfo from '../../package.json' with { type: 'json' };
 import paramsListJobs from './params-ListJobs.js';
 import handleCryptCommand from './params-Crypt.js';
+import handleGenerateConfigCommand from "./params-CreateConfig.js";
 
 // Parse arguments
 const args = process.argv.slice(2);
-
-/**
- * Lida com comando generate-config
- * @param {string[]} args - Argumentos do comando
- */
-async function handleGenerateConfigCommand(args) {
-  try {
-    // Parse argumentos
-    let swaggerFile = null;
-    let outputFile = null;
-
-    for (let i = 0; i < args.length; i++) {
-      const arg = args[i];
-      switch (arg) {
-        case '--swagger':
-          swaggerFile = args[++i];
-          break;
-        case '-o':
-        case '--output':
-          outputFile = args[++i];
-          break;
-        case '--help':
-        case '-h':
-          console.log('Uso: gicli generate-config --swagger <arquivo> --output <arquivo>');
-          console.log('');
-          console.log('Opções:');
-          console.log('  --swagger <arquivo>    Arquivo Swagger/OpenAPI de entrada');
-          console.log('  -o, --output <arquivo> Arquivo de configuração de saída');
-          console.log('  -h, --help            Exibe esta ajuda');
-          console.log('');
-          console.log('Exemplo:');
-          console.log('  gicli generate-config --swagger docs/starsoft/swagger.json --output starsoft-generated.json');
-          process.exit(0);
-          break;
-        default:
-          console.error(`Argumento desconhecido: ${arg}`);
-          console.log('Use --help para ver as opções disponíveis');
-          process.exit(1);
-      }
-    }
-
-    // Validar argumentos obrigatórios
-    if (!swaggerFile) {
-      console.error('Erro: Arquivo swagger é obrigatório');
-      console.log('Uso: gicli generate-config --swagger <arquivo> --output <arquivo>');
-      process.exit(1);
-    }
-
-    if (!outputFile) {
-      // Gerar nome de arquivo de saída automaticamente
-      const swaggerName = swaggerFile.split('/').pop().split('\\').pop().replace('.json', '');
-      outputFile = `${swaggerName}-generated.json`;
-    }
-
-    // Gerar configuração
-    await swaggerGeneratorService.generateConfigFromFile(swaggerFile, outputFile);
-
-  } catch (error) {
-    console.error('❌ Erro ao gerar configuração:', error.message);
-    process.exit(1);
-  }
-}
 
 /**
  * Exibe o texto de ajuda da CLI
@@ -216,7 +154,6 @@ let mode = null;
 let jobName = null;
 let importConfigs = false;
 let validateOnly = false;
-let verbose = false;
 let silent = false;
 let configDir = null;
 let configFile = null;
