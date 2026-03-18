@@ -8,6 +8,7 @@
     "gicli": "src/cli/index.js"
   },
   "scripts": {
+    "listar-jobs": "node src/cli/index.js --list ids servicelayer",
     "dev": "node src/cli/index.js",
     "test": "node src/cli/index.js --help && echo 'CLI syntax validation passed'",
     "start": "node src/cli/index.js",
