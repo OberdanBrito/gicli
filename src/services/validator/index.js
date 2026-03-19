@@ -26,8 +26,7 @@ class ValidatorService {
     try {
       const schemaContent = readFileSync(this.schemaPath, 'utf-8');
       const schema = JSON.parse(schemaContent);
-      this.validateFunction = this.ajv.compile(schema);
-      console.log('Esquema de validação carregado com sucesso');
+      this.validateFunction = this.ajv.compile(schema);      
     } catch (error) {
       console.error('Erro ao carregar esquema de validação:', error.message);
       throw error;

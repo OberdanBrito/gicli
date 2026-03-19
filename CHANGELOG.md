@@ -11,11 +11,13 @@
 ### 🐛 Bug Fixes
 - **Logs HTTP em Modo Silencioso**: Corrigido problema onde logs de requisições HTTP não respeitavam o parâmetro `-s/--silent`
 - **Propagação do Modo Silencioso**: Implementada propagação completa através de ExecutionService e AuthService
+- **Duplicação de Versão**: Corrigido problema onde o comando `--version` exibia a versão duas vezes
 
 ### 📝 Technical Changes
 - HttpClientService agora segue o mesmo padrão de outros serviços com propriedade `silent`
 - AuthService e ExecutionService propagam configuração silent para HTTP client
 - Logs de autenticação e renovação de token também respeitam modo silencioso
+- Removido console.log duplicado do VersionService
 
 ## [0.5.27] - 2026-03-19
 

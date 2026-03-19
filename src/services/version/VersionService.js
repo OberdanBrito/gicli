@@ -18,8 +18,7 @@ class VersionService extends BaseService {
    */
   getVersion() {
     try {
-      this.logStart('obtenção de versão');
-
+      
       const __filename = fileURLToPath(import.meta.url);
       const __dirname = dirname(__filename);
       const packagePath = join(__dirname, '../../../package.json');
@@ -27,7 +26,6 @@ class VersionService extends BaseService {
       const packageInfo = JSON.parse(readFileSync(packagePath, 'utf-8'));
       const version = packageInfo.version;
 
-      this.logEnd('obtenção de versão', true, { version });
       return version;
     } catch (error) {
       this.logError('obtenção de versão', error);

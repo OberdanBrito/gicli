@@ -74,8 +74,9 @@ class LoggerService {
       // Tenta criar o diretório para testar permissões
       if (!existsSync(systemLogDir)) {
         mkdirSync(systemLogDir, { recursive: true });
+        console.log(`Recriando diretório padrão Linux: ${systemLogDir}`);
       }
-      console.log(`Usando diretório padrão Linux: ${systemLogDir}`);
+      
       return systemLogDir;
     } catch (error) {
       console.warn(`Não foi possível usar /var/log/gicli: ${error.message}`);

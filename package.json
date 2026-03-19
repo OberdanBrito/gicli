@@ -8,12 +8,12 @@
     "gicli": "src/cli/index.js"
   },
   "scripts": {
-    "listar-jobs": "node src/cli/index.js --list ids servicelayer",
-    "encrypt": "npm run dev encrypt \"teste123\"",
-    "dev": "node src/cli/index.js",
-    "test": "node src/cli/index.js --help && echo 'CLI syntax validation passed'",
-    "start": "node src/cli/index.js",
-    "admissao": "node src/cli/index.js -f .\\servicelayerrfp.json -p -j post_api_v1_Colaborador_pre_admitir --params-file .\\payload.json"
+    "listar-jobs": "node --no-warnings src/cli/index.js --list ids servicelayer",
+    "encrypt": "npm run dev -- encrypt \"teste123\"",
+    "dev": "node --no-warnings src/cli/index.js",
+    "test": "node --no-warnings src/cli/index.js --help && echo 'CLI syntax validation passed'",
+    "start": "node --no-warnings src/cli/index.js",
+    "admissao": "node --no-warnings src/cli/index.js -f .\\servicelayerrfp.json -p -j post_api_v1_Colaborador_pre_admitir --params-file .\\payload.json"
   },
   "keywords": [
     "cli",

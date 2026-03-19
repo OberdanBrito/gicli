@@ -89,7 +89,7 @@ for (let i = 0; i < args.length; i++) {
       break;
     case '--version':
       const versionService = new VersionService();
-      console.log(versionService.getVersion());
+      console.log(`Versão: ${versionService.getVersion()}`);
       process.exit(0);
       break;
     case '-i':
