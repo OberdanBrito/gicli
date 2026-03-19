@@ -68,7 +68,7 @@ class ExecutionService {
         const result = await this.executeRequest(originConfig, jobConfig, mode);
 
         // console.log('Result==================:', result);
-        console.log('Erros===================:', result.data);
+        // console.log('Erros===================:', result.data);
 
         return {
           success: true,

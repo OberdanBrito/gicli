@@ -13,6 +13,19 @@ class TransportService {
     };
     this.activeDriver = null;
     this.connected = false;
+    this.silent = false; // Propriedade pública para modo silencioso
+  }
+
+  /**
+   * Define modo silencioso
+   * @param {boolean} silent - True para silencioso
+   */
+  setSilent(silent) {
+    this.silent = silent;
+    // Propaga para o driver ativo
+    if (this.activeDriver && typeof this.activeDriver.setSilent === 'function') {
+      this.activeDriver.setSilent(silent);
+    }
   }
 
   /**
@@ -27,11 +40,19 @@ class TransportService {
 
     try {
       this.activeDriver = new (this.drivers[driverName])();
+      // Propaga configuração silent para o novo driver
+      if (typeof this.activeDriver.setSilent === 'function') {
+        this.activeDriver.setSilent(this.silent);
+      }
       await this.activeDriver.connect(connectionString);
       this.connected = true;
-      console.log(`Transporte conectado via driver ${driverName}`);
+      if (!this.silent) {
+        console.log(`Transporte conectado via driver ${driverName}`);
+      }
     } catch (error) {
-      console.error(`Erro ao conectar transporte ${driverName}:`, error.message);
+      if (!this.silent) {
+        console.error(`Erro ao conectar transporte ${driverName}:`, error.message);
+      }
       throw error;
     }
   }
@@ -44,7 +65,9 @@ class TransportService {
       await this.activeDriver.disconnect();
       this.activeDriver = null;
       this.connected = false;
-      console.log('Transporte desconectado');
+      if (!this.silent) {
+        console.log('Transporte desconectado');
+      }
     }
   }
 
@@ -56,7 +79,9 @@ class TransportService {
    * @param {object} originConfig - Configuração da origem (para herdar connection_string)
    */
   async processDatabaseOutput(responseData, outputConfig, metadata = {}, originConfig = {}) {
-    console.log('Processando dados para banco de dados...');
+    if (!this.silent) {
+      console.log('Processando dados para banco de dados...');
+    }
     
     if (!this.connected || !this.activeDriver) {
       throw new Error('Transporte não conectado ao banco de dados');
@@ -85,7 +110,9 @@ class TransportService {
       if (dataToProcess && typeof dataToProcess === 'object' && !Array.isArray(dataToProcess)) {
         const keys = Object.keys(dataToProcess);
         if (keys.length > 0 && keys.every(k => /^\d+$/.test(k))) {
-          console.log(`Convertendo objeto com chaves numéricas para array (${keys.length} itens)`);
+          if (!this.silent) {
+            console.log(`Convertendo objeto com chaves numéricas para array (${keys.length} itens)`);
+          }
           dataToProcess = Object.values(dataToProcess);
         }
       }
@@ -101,12 +128,16 @@ class TransportService {
         hasIdColumn = this.hasIdColumn(dataToProcess);
       }
 
-      console.log(`Existe Id no response? ${hasIdColumn ? 'Sim' : 'Não'}`);
+      if (!this.silent) {
+        console.log(`Existe Id no response? ${hasIdColumn ? 'Sim' : 'Não'}`);
+      }
 
       // Verifica se os dados extraídos são um array
       if (Array.isArray(dataToProcess)) {
         if (dataToProcess.length === 0) {
-          console.log('Array vazio recebido, nenhum registro para inserir');
+          if (!this.silent) {
+            console.log('Array vazio recebido, nenhum registro para inserir');
+          }
           return {
             success: true,
             table,
@@ -115,8 +146,10 @@ class TransportService {
           };
         }
 
-        console.log(`Processando array com ${dataToProcess.length} itens`);
-        console.log(`=== INICIANDO LOOP DE INSERÇÃO ===`);
+        if (!this.silent) {
+          console.log(`Processando array com ${dataToProcess.length} itens`);
+          console.log(`=== INICIANDO LOOP DE INSERÇÃO ===`);
+        }
 
         // Processa cada item do array
         for (let i = 0; i < dataToProcess.length; i++) {
@@ -134,28 +167,36 @@ class TransportService {
             
             // Limpa tabela antes da inserção se solicitado
             if (clear_before_insert) {
-              console.log(`Preparando a tabela [${table}]`);
+              if (!this.silent) {
+                console.log(`Preparando a tabela [${table}]`);
+              }
               await this.activeDriver.clearTable(table);
             }
           }
 
           try {
             // Insere os dados
-            console.log('Dados a inserir:', JSON.stringify(dataToInsert, null, 2));
+            if (!this.silent) {
+              console.log('Dados a inserir:', JSON.stringify(dataToInsert, null, 2));
+            }
             const insertId = await this.activeDriver.insert(table, dataToInsert, hasIdColumn);
             recordsInserted++;
 
-            if (i > 0 && i % 10 === 0) {
+            if (!this.silent && i > 0 && i % 10 === 0) {
               console.log(`Inseridos ${i} registros...`);
             }
           } catch (insertError) {
-            console.error(`Erro ao inserir registro ${i} (id: ${item.id || 'N/A'}):`, insertError.message);
-            console.error('Dados do registro problemático:', JSON.stringify(item, null, 2));
+            if (!this.silent) {
+              console.error(`Erro ao inserir registro ${i} (id: ${item.id || 'N/A'}):`, insertError.message);
+              console.error('Dados do registro problemático:', JSON.stringify(item, null, 2));
+            }
             // Continua processando os demais registros
           }
         }
 
-        console.log(`Total de registros inseridos: ${recordsInserted}`);
+        if (!this.silent) {
+          console.log(`Total de registros inseridos: ${recordsInserted}`);
+        }
 
       } else {
         // Processa objeto único (comportamento original)
@@ -177,7 +218,9 @@ class TransportService {
       };
 
     } catch (error) {
-      console.error('Erro no processamento de saída para banco:', error.message);
+      if (!this.silent) {
+        console.error('Erro no processamento de saída para banco:', error.message);
+      }
       return {
         success: false,
         error: error.message
@@ -265,9 +308,9 @@ class TransportService {
   }
 
   /**
-   * Verifica se os dados têm uma coluna ID própria
+   * Verifica se os dados têm coluna ID própria
    * @param {object} sampleData - Dados de exemplo
-   * @returns {boolean} True se tem coluna ID própria
+   * @returns {boolean} True se tem coluna ID
    */
   hasIdColumn(sampleData) {
     if (!sampleData || typeof sampleData !== 'object') {
@@ -279,7 +322,9 @@ class TransportService {
 
     for (const column of idColumns) {
       if (column in sampleData) {
-        console.log(`Encontrada coluna ID própria: '${column}'`);
+        if (!this.silent) {
+          console.log(`Encontrada coluna ID própria: '${column}'`);
+        }
         return true;
       }
     }
@@ -307,10 +352,14 @@ class TransportService {
       // Tabela não existe, cria nova
       const columns = this.inferColumnsFromData(sampleData);
       await this.activeDriver.createTable(tableName, columns, hasIdColumn);
-      console.log(`Tabela ${tableName} criada com ${Object.keys(columns).length} colunas (hasIdColumn: ${hasIdColumn})`);
+      if (!this.silent) {
+        console.log(`Tabela ${tableName} criada com ${Object.keys(columns).length} colunas (hasIdColumn: ${hasIdColumn})`);
+      }
 
     } catch (error) {
-      console.error(`Erro ao garantir tabela ${tableName}:`, error.message);
+      if (!this.silent) {
+        console.error(`Erro ao garantir tabela ${tableName}:`, error.message);
+      }
       throw error;
     }
   }
@@ -329,7 +378,7 @@ class TransportService {
         WHERE TABLE_NAME = '${tableName.replace('dbo.', '')}'
         ORDER BY ORDINAL_POSITION
       `;
-      const columns = await this.activeDriver.query(sql);
+      const columns = await this.activeDriver.query(sql, [], true);
 
       return columns.map(col => ({
         name: col.name,
@@ -349,8 +398,10 @@ class TransportService {
    */
   async addColumnToTable(tableName, columnName, columnType) {
     const sql = `ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${columnType}`;
-    await this.activeDriver.query(sql);
-    console.log(`Coluna ${columnName} adicionada à tabela ${tableName}`);
+    await this.activeDriver.query(sql, []);
+    if (!this.silent) {
+      console.log(`Coluna ${columnName} adicionada à tabela ${tableName}`);
+    }
   }
 
   /**

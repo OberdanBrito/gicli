@@ -7,6 +7,15 @@ import sql from 'mssql';
 class SQLServerDriver {
   constructor() {
     this.pool = null;
+    this.silent = false; // Propriedade pública para modo silencioso
+  }
+
+  /**
+   * Define modo silencioso
+   * @param {boolean} silent - True para silencioso
+   */
+  setSilent(silent) {
+    this.silent = silent;
   }
 
   /**
@@ -19,7 +28,9 @@ class SQLServerDriver {
       this.pool = await sql.connect(config);      
       return true;
     } catch (error) {
-      console.error('Erro ao conectar ao SQL Server:', error.message);
+      if (!this.silent) {
+        console.error('Erro ao conectar ao SQL Server:', error.message);
+      }
       throw error;
     }
   }
@@ -31,7 +42,9 @@ class SQLServerDriver {
     if (this.pool) {
       await this.pool.close();
       this.pool = null;
-      console.log('Desconectado da base de dados');
+      if (!this.silent) {
+        console.log('Desconectado da base de dados');
+      }
     }
   }
 
@@ -119,16 +132,24 @@ class SQLServerDriver {
       // Tenta TRUNCATE primeiro (mais rápido, mas falha com FK)
       const truncateSql = `TRUNCATE TABLE [${tableName}]`;
       await this.pool.request().query(truncateSql);
-      console.log(`Tabela ${tableName} limpa com TRUNCATE`);
+      if (!this.silent) {
+        console.log(`Tabela ${tableName} limpa com TRUNCATE`);
+      }
     } catch (truncateError) {
       // Se TRUNCATE falhar (provavelmente por foreign keys), usa DELETE
       try {
-        console.log(`TRUNCATE falhou para ${tableName}, usando DELETE...`);
+        if (!this.silent) {
+          console.log(`TRUNCATE falhou para ${tableName}, usando DELETE...`);
+        }
         const deleteSql = `DELETE FROM [${tableName}]`;
         await this.pool.request().query(deleteSql);
-        console.log(`Tabela ${tableName} limpa com DELETE`);
+        if (!this.silent) {
+          console.log(`Tabela ${tableName} limpa com DELETE`);
+        }
       } catch (deleteError) {
+      if (!this.silent) {
         console.error(`Erro ao limpar tabela ${tableName}:`, deleteError.message);
+      }
         throw deleteError;
       }
     }
@@ -144,8 +165,10 @@ class SQLServerDriver {
     if (!this.pool) throw new Error('Banco não conectado');
 
     // Debug: Mostrar colunas recebidas
-    console.log(`DEBUG CREATE TABLE - ${tableName}:`, Object.keys(columns));
-    console.log(`DEBUG CREATE TABLE - columns object:`, columns);
+    if (!this.silent) {
+      console.log(`DEBUG CREATE TABLE - ${tableName}:`, Object.keys(columns));
+      console.log(`DEBUG CREATE TABLE - columns object:`, columns);
+    }
 
     const columnDefs = Object.entries(columns)
       .map(([col, type]) => `[${col}] ${type}`)
@@ -164,14 +187,20 @@ class SQLServerDriver {
                  )`;
 
     // Debug: Mostrar SQL final gerado
-    console.log('DEBUG CREATE TABLE - SQL gerado:');
-    console.log(sql);
+    if (!this.silent) {
+      console.log('DEBUG CREATE TABLE - SQL gerado:');
+      console.log(sql);
+    }
 
     try {
       await this.pool.request().query(sql);
-      console.log(`Tabela ${tableName} criada/verificada (hasIdColumn: ${hasIdColumn})`);
+      if (!this.silent) {
+        console.log(`Tabela ${tableName} criada/verificada (hasIdColumn: ${hasIdColumn})`);
+      }
     } catch (error) {
-      console.error(`Erro ao criar tabela ${tableName}:`, error.message);
+      if (!this.silent) {
+        console.error(`Erro ao criar tabela ${tableName}:`, error.message);
+      }
       throw error;
     }
   }
@@ -220,10 +249,14 @@ class SQLServerDriver {
       const result = await request.query(sql);
       const id = result.recordset[0].id;
 
-      console.log(`Dados inseridos na tabela ${tableName}, ID: ${id}`);
+      if (!this.silent) {
+        console.log(`Dados inseridos na tabela ${tableName}, ID: ${id}`);
+      }
       return id;
     } catch (error) {
-      console.error(`Erro ao inserir dados na tabela ${tableName}:`, error.message);
+      if (!this.silent) {
+        console.error(`Erro ao inserir dados na tabela ${tableName}:`, error.message);
+      }
       throw error;
     }
   }
@@ -248,7 +281,9 @@ class SQLServerDriver {
       const result = await request.query(sqlQuery);
       return result.recordset;
     } catch (error) {
-      console.error('Erro ao executar query:', error.message);
+      if (!this.silent) {
+        console.error('Erro ao executar query:', error.message);
+      }
       throw error;
     }
   }

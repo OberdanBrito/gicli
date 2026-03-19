@@ -1,5 +1,43 @@
 # Changelog
 
+## [0.5.26] - 2026-03-19
+
+### 🔧 Refactoring
+- **Modo Silencioso Otimizado**: Refatorada implementação do parâmetro `-s/--silent` para usar propriedades de classe em vez de passagem de parâmetros
+  - `SQLServerDriver`: Adicionada propriedade `silent` e método `setSilent()`
+  - `TransportService`: Adicionada propriedade `silent` com propagação automática para drivers
+  - Removido parâmetro `silent` das assinaturas de todos os métodos
+  - Logs do banco de dados agora respeitam o modo silencioso em todos os níveis
+
+### 🐛 Bug Fixes
+- **Logs em Modo Silencioso**: Corrigido problema onde logs de inserção no SQL Server não respeitavam o parâmetro `-s/--silent`
+- **Propagação do Modo Silencioso**: Implementada propagação automática da configuração silent quando novos drivers são criados
+
+### 📝 Technical Changes
+- Código mais limpo e orientado a objetos sem inflar assinaturas de métodos
+- Padrão consistente com `loggerService.setSilent()` já existente
+- Melhor performance ao evitar passagem contínua do parâmetro pela cadeia de chamadas
+
+## [0.5.25] - 2026-03-18
+
+### 🔧 Refactoring
+- **Modularização da CLI**: Movidas funções para módulos separados para melhor organização do código
+  - `listJobs` → `params-ListJobs.js`
+  - `handleCryptCommand` → `params-Crypt.js`
+  - `handleGenerateConfigCommand` → `params-CreateConfig.js`
+  - `processJobOutput` e `processFailureOutput` → `params-ProcessJobsOutput.js`
+- **Limpeza de Imports**: Removidos imports não utilizados do arquivo principal (`index.js`)
+- **Scripts npm**: Adicionados scripts `listar-jobs` e `encrypt` para facilitar execuções comuns
+
+### ✨ New Features
+- **baseService**: Módulo base para serviços com funcionalidades comuns
+- **VersionService**: Serviço para gerenciamento de versão da aplicação
+
+### 📝 Technical Changes
+- Estrutura de arquivos reorganizada para melhor manutenibilidade
+- Código mais limpo e modular no arquivo principal da CLI
+- Mantida compatibilidade 100% com funcionalidades existentes
+
 ## [0.3.8] - 2026-03-13
 
 ### 🐛 Bug Fixes

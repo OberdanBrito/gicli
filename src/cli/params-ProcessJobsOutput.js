@@ -88,6 +88,7 @@ async function processJobOutput(jobConfig, jobResult, originConfig, mode, silent
             const connectionStringSubstituted = environmentService.substitute(connectionString, originConfig.name);
 
             await transportService.connect(jobConfig.output.driver, connectionStringSubstituted);
+            transportService.setSilent(silent);
             const outputResult = await transportService.processDatabaseOutput(
                 jobResult.response.data,
                 jobConfig.output,
