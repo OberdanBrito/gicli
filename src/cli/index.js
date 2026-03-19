@@ -392,8 +392,8 @@ if (importConfigs) {
 
           if (!silent) {
             console.log(`\nProcessamento em lote concluído:`);
-            console.log(`  ✓ Sucessos: ${totalProcessed}`);
-            console.log(`  ✗ Erros: ${totalErrors}`);
+            console.log(`Sucessos: ${totalProcessed}`);
+            console.log(`Erros: ${totalErrors}`);
           }
 
           if (totalProcessed === 0) {
