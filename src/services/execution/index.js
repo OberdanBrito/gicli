@@ -45,7 +45,7 @@ class ExecutionService {
 
       // Se for job de auth, delega para auth service
       if (jobConfig.type === 'auth') {
-        const result = await authService.authenticate(originConfig, jobConfig, mode);
+        const result = await authService.authenticate(originConfig, jobConfig, mode, silent);
         return {
           success: true,
           type: 'auth',
@@ -60,12 +60,12 @@ class ExecutionService {
         if (jobConfig.session_name) {
           const authResult = this.findAuthJob(originConfig, jobConfig.session_name, allOrigins);
           if (authResult) {
-            await authService.refreshAuthentication(authResult.origin, authResult.job, mode);
+            await authService.refreshAuthentication(authResult.origin, authResult.job, mode, silent);
           }
         }
 
         // Executa a requisição
-        const result = await this.executeRequest(originConfig, jobConfig, mode);
+        const result = await this.executeRequest(originConfig, jobConfig, mode, silent);
 
         // console.log('Result==================:', result);
         // console.log('Erros===================:', result.data);
@@ -99,9 +99,10 @@ class ExecutionService {
    * @param {object} originConfig - Configuração da origem
    * @param {object} jobConfig - Configuração do job
    * @param {string} mode - Modo de execução
+   * @param {boolean} silent - Modo silencioso
    * @returns {Promise<object>} Resultado da requisição
    */
-  async executeRequest(originConfig, jobConfig, mode = 'production') {
+  async executeRequest(originConfig, jobConfig, mode = 'production', silent = false) {
     let authRetryAttempted = false;
 
     // Base URL para o job
@@ -156,6 +157,9 @@ class ExecutionService {
           : JSON.stringify(processedPayload);
       }
 
+      // Configura modo silencioso no HTTP client
+      httpClientService.setSilent(silent);
+      
       // Faz a requisição
       const response = await httpClientService.request(jobConfig.method, finalUrl, httpOptions);
 
@@ -177,7 +181,7 @@ class ExecutionService {
           // Renova autenticação
           const authResult = this.findAuthJob(originConfig, jobConfig.session_name, allOrigins);
           if (authResult) {
-            await authService.refreshAuthentication(authResult.origin, authResult.job, mode);
+            await authService.refreshAuthentication(authResult.origin, authResult.job, mode, silent);
           }
           loggerService.info(`Autenticação renovada para ${originConfig.name}, tentando requisição novamente...`);
 
@@ -233,7 +237,7 @@ class ExecutionService {
           // Renova autenticação
           const authResult = this.findAuthJob(originConfig, jobConfig.session_name, allOrigins);
           if (authResult) {
-            await authService.refreshAuthentication(authResult.origin, authResult.job, mode);
+            await authService.refreshAuthentication(authResult.origin, authResult.job, mode, silent);
           }
           loggerService.info(`Autenticação renovada para ${originConfig.name}, tentando requisição novamente...`);
 

@@ -8,6 +8,15 @@ class HttpClientService {
     this.defaultTimeout = 30000; // 30 segundos
     this.defaultRetries = 3;
     this.defaultRetryDelay = 1000; // 1 segundo
+    this.silent = false; // Propriedade pública para modo silencioso
+  }
+
+  /**
+   * Define modo silencioso
+   * @param {boolean} silent - True para silencioso
+   */
+  setSilent(silent) {
+    this.silent = silent;
   }
 
   /**
@@ -56,16 +65,18 @@ class HttpClientService {
           }
         }
 
-        console.log(`[HTTP-CLIENT] Fazendo ${method.toUpperCase()} para: ${url}`);
-        
-        // Mascarar token de autorização nos headers para log
-        let logHeaders = { ...headers };
-        if (logHeaders['Authorization'] && logHeaders['Authorization'].startsWith('Bearer ')) {
-          logHeaders['Authorization'] = 'Bearer ***';
+        if (!this.silent) {
+          console.log(`[HTTP-CLIENT] Fazendo ${method.toUpperCase()} para: ${url}`);
+          
+          // Mascarar token de autorização nos headers para log
+          let logHeaders = { ...headers };
+          if (logHeaders['Authorization'] && logHeaders['Authorization'].startsWith('Bearer ')) {
+            logHeaders['Authorization'] = 'Bearer ***';
+          }
+          
+          console.log(`[HTTP-CLIENT] Headers:`, JSON.stringify(logHeaders, null, 2));
+          console.log(`[HTTP-CLIENT] Timeout: ${timeout}ms, Tentativa: ${attempt}/${retries + 1}`);
         }
-        
-        console.log(`[HTTP-CLIENT] Headers:`, JSON.stringify(logHeaders, null, 2));
-        console.log(`[HTTP-CLIENT] Timeout: ${timeout}ms, Tentativa: ${attempt}/${retries + 1}`);
 
         const response = await fetch(url, fetchConfig);
         clearTimeout(timeoutId);
@@ -98,8 +109,10 @@ class HttpClientService {
       } catch (error) {
         lastError = error;
 
-        console.log(`[HTTP-CLIENT] Erro na tentativa ${attempt}:`, error.message);
-        console.log(`[HTTP-CLIENT] Tipo do erro:`, error.constructor.name);
+        if (!this.silent) {
+          console.log(`[HTTP-CLIENT] Erro na tentativa ${attempt}:`, error.message);
+          console.log(`[HTTP-CLIENT] Tipo do erro:`, error.constructor.name);
+        }
 
         // Não tenta retry para erros de cliente (4xx) ou se é a última tentativa
         if (attempt > retries ||
@@ -107,7 +120,9 @@ class HttpClientService {
           break;
         }
 
-        console.warn(`Tentativa ${attempt} falhou, tentando novamente em ${retryDelay}ms:`, error.message);
+        if (!this.silent) {
+          console.warn(`Tentativa ${attempt} falhou, tentando novamente em ${retryDelay}ms:`, error.message);
+        }
 
         if (attempt <= retries) {
           await this.delay(retryDelay);

@@ -17,11 +17,14 @@ class AuthService {
    * @param {object} originConfig - Configuração da origem
    * @param {object} jobConfig - Configuração do job de auth
    * @param {string} mode - Modo de execução
+   * @param {boolean} silent - Modo silencioso
    * @returns {Promise<boolean>} True se autenticado com sucesso
    */
-  async authenticate(originConfig, jobConfig, mode = 'production') {
+  async authenticate(originConfig, jobConfig, mode = 'production', silent = false) {
     try {
-      console.log(`Iniciando autenticação para ${originConfig.name}`);
+      if (!silent) {
+        console.log(`Iniciando autenticação para ${originConfig.name}`);
+      }
 
       // Carrega variáveis de ambiente
       environmentService.load(originConfig.name);
@@ -37,6 +40,9 @@ class AuthService {
       const processedPayload = environmentService.substituteDeep(jobConfig.payload, originConfig.name);
       const processedHeaders = environmentService.substituteDeep(headers, originConfig.name);
 
+      // Configura modo silencioso no HTTP client
+      httpClientService.setSilent(silent);
+      
       // Faz a requisição
       const response = await httpClientService.request(jobConfig.method, url, {
         headers: processedHeaders,
@@ -61,12 +67,16 @@ class AuthService {
       // Registra a sessão ativa
       this.activeSessions.set(originConfig.name, sessionName);
 
-      console.log(`Autenticação bem-sucedida para ${originConfig.name}, token armazenado em ${sessionName}`);
+      if (!silent) {
+        console.log(`Autenticação bem-sucedida para ${originConfig.name}, token armazenado em ${sessionName}`);
+      }
 
       return true;
 
     } catch (error) {
-      console.error(`Erro na autenticação para ${originConfig.name}:`, error.message);
+      if (!silent) {
+        console.error(`Erro na autenticação para ${originConfig.name}:`, error.message);
+      }
       throw error;
     }
   }
@@ -96,15 +106,18 @@ class AuthService {
    * @param {object} originConfig - Configuração da origem
    * @param {object} jobConfig - Configuração do job de auth
    * @param {string} mode - Modo de execução
+   * @param {boolean} silent - Modo silencioso
    * @returns {Promise<boolean>} True se renovado
    */
-  async refreshAuthentication(originConfig, jobConfig, mode = 'production') {
+  async refreshAuthentication(originConfig, jobConfig, mode = 'production', silent = false) {
     if (this.isAuthenticated(originConfig.name)) {
-      console.log(`Token ainda válido para ${originConfig.name}`);
+      if (!silent) {
+        console.log(`Token ainda válido para ${originConfig.name}`);
+      }
       return true;
     }
 
-    return this.authenticate(originConfig, jobConfig, mode);
+    return this.authenticate(originConfig, jobConfig, mode, silent);
   }
 
   /**

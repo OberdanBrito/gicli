@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.5.28] - 2026-03-19
+
+### 🔧 Refactoring
+- **Modo Silencioso no HTTP Client**: Implementado suporte completo ao modo silencioso no HttpClientService
+  - Adicionada propriedade `silent` e método `setSilent()`
+  - Logs de requisições HTTP, retries e erros agora respeitam o modo silencioso
+  - Token de autorização é mascarado nos logs apenas quando não está em modo silencioso
+
+### 🐛 Bug Fixes
+- **Logs HTTP em Modo Silencioso**: Corrigido problema onde logs de requisições HTTP não respeitavam o parâmetro `-s/--silent`
+- **Propagação do Modo Silencioso**: Implementada propagação completa através de ExecutionService e AuthService
+
+### 📝 Technical Changes
+- HttpClientService agora segue o mesmo padrão de outros serviços com propriedade `silent`
+- AuthService e ExecutionService propagam configuração silent para HTTP client
+- Logs de autenticação e renovação de token também respeitam modo silencioso
+
+## [0.5.27] - 2026-03-19
+
+### 🐛 Bug Fixes
+- **Logs em Modo Silencioso**: Corrigido problema onde logs de inserção no SQL Server não respeitavam o parâmetro `-s/--silent`
+- **Propagação do Modo Silencioso**: Implementada propagação automática da configuração silent quando novos drivers são criados
+
+### 📝 Technical Changes
+- Publicada versão 0.5.27 no npm registry
+
 ## [0.5.26] - 2026-03-19
 
 ### 🔧 Refactoring
